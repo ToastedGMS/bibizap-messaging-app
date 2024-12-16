@@ -12,6 +12,7 @@ Technologies used:
   1. Express
   2. NodeJS
   3. Supabase
+  4. Prisma ORM
 
 Core functions:
 
