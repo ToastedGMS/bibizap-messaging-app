@@ -18,8 +18,8 @@ model User {
   email    String   @unique
   username String
   password String
-  bio String @db.VarChar(140)
-  dp       String   // URL to the user's display picture
+  bio String? @db.VarChar(140)
+  dp       String?   // URL to the user's display picture
   chats    ChatUser[] // Relationship with Chat via join table
   friends User[] @relation("Friendship")
   friendOf User[] @relation("Friendship")
