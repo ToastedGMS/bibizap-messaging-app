@@ -1,7 +1,7 @@
 const router = require('express').Router();
-const { createUser } = require('../controllers/userAuth.cjs');
+const { createUser, checkCredentials } = require('../controllers/userAuth.cjs');
 
-router.post('/', async (req, res) => {
+router.post('/new', async (req, res) => {
 	const { email, password, bio, dp, username } = req.body;
 
 	if (!email || !password || !username) {
@@ -20,6 +20,27 @@ router.post('/', async (req, res) => {
 		}
 	} catch (error) {
 		console.error('Error during user creation:', error);
+		return res.status(500).json({ error: 'Internal server error' });
+	}
+});
+
+router.post('/login', async (req, res) => {
+	const { identification, password } = req.body;
+
+	if (!identification || !password) {
+		return res.status(400).json({ error: 'Missing required fields' });
+	}
+
+	try {
+		const info = await checkCredentials(identification, password);
+
+		if (info) {
+			return res.status(200).json({ message: 'Login successful', info });
+		} else {
+			return res.status(401).json({ error: 'User login failed' });
+		}
+	} catch (error) {
+		console.error('Error during user login:', error);
 		return res.status(500).json({ error: 'Internal server error' });
 	}
 });

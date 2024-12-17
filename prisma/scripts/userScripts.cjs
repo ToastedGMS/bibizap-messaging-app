@@ -32,4 +32,38 @@ async function dbCreateUser({ userInfo }) {
 	}
 }
 
-module.exports = { dbCreateUser };
+async function dbCheckCredentials({ userInfo }) {
+	const { identification, password } = userInfo;
+
+	if (!identification || !password) {
+		throw new Error('One or more missing parameters for checking credentials');
+	}
+
+	const stringType = identification.includes('@') ? 'email' : 'username';
+
+	try {
+		const user = await prisma.user.findFirst({
+			where: {
+				[stringType]: identification,
+			},
+		});
+
+		if (!user) {
+			throw new Error('Unable to find matching credentials');
+		}
+
+		const passwordMatch = await bcrypt.compare(password, user.password);
+		if (!passwordMatch) {
+			throw new Error('Unable to find matching credentials');
+		}
+
+		return { id: user.id, email: user.email, username: user.username };
+	} catch (error) {
+		console.error('Error checking user credentials', error);
+		throw error;
+	} finally {
+		await prisma.$disconnect();
+	}
+}
+
+module.exports = { dbCreateUser, dbCheckCredentials };
