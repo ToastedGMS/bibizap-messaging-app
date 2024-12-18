@@ -61,4 +61,28 @@ async function checkCredentials(identification, password) {
 	}
 }
 
-module.exports = { createUser, checkCredentials };
+function verifyToken(req, res, next) {
+	const authHeader = req.headers['authorization'];
+	const token = authHeader && authHeader.split(' ')[1];
+
+	if (!token) {
+		return res
+			.status(401)
+			.json({ error: 'Missing token. Authorization denied.' });
+	}
+
+	jwt.verify(token, jwtSecretKey, (error, decoded) => {
+		if (error) {
+			console.error('JWT verification error:', error.message);
+			return res.status(403).json({ error: 'Forbidden' });
+		}
+
+		req.user = {
+			id: decoded.id,
+		};
+
+		next();
+	});
+}
+
+module.exports = { createUser, checkCredentials, verifyToken };
