@@ -7,15 +7,21 @@ import Logout from './Logout.jsx';
 
 const Root = () => {
 	const [accessToken, setAccessToken] = useState(null);
+	const [userInfo, setUserInfo] = useState(null);
 
 	return (
 		<StrictMode>
 			<BrowserRouter>
 				<Routes>
-					<Route path="/" element={<App />} />
+					<Route path="/" element={<App userInfo={userInfo} />} />
 					<Route
 						path="/login"
-						element={<Login tokenState={{ accessToken, setAccessToken }} />}
+						element={
+							<Login
+								tokenState={{ accessToken, setAccessToken }}
+								setUserInfo={setUserInfo}
+							/>
+						}
 					/>
 					<Route
 						path="/logout"
