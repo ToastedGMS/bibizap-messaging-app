@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-export default function Login({ tokenState }) {
+export default function Login({ tokenState, setUserInfo }) {
 	const [identification, setIdentification] = useState('');
 	const [password, setPassword] = useState('');
 	const [loading, setLoading] = useState(false);
 	const [errorMessage, setErrorMessage] = useState(null);
 	const { accessToken, setAccessToken } = tokenState;
+	const navigate = useNavigate();
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
@@ -32,6 +34,8 @@ export default function Login({ tokenState }) {
 
 			const data = await response.json();
 			setAccessToken(data.info.token);
+			setUserInfo(data.info.user);
+			navigate('/');
 
 			setIdentification('');
 			setPassword('');
