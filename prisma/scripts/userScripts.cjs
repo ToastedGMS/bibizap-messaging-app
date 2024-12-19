@@ -27,8 +27,6 @@ async function dbCreateUser({ userInfo }) {
 	} catch (error) {
 		console.error('Error creating user', error);
 		throw error;
-	} finally {
-		await prisma.$disconnect();
 	}
 }
 
@@ -49,20 +47,22 @@ async function dbCheckCredentials({ userInfo }) {
 		});
 
 		if (!user) {
-			throw new Error('Unable to find matching credentials');
+			throw new Error(
+				'Unable to find matching credentials, check username and password and try again.'
+			);
 		}
 
 		const passwordMatch = await bcrypt.compare(password, user.password);
 		if (!passwordMatch) {
-			throw new Error('Unable to find matching credentials');
+			throw new Error(
+				'Unable to find matching credentials, check username and password and try again.'
+			);
 		}
 
 		return { id: user.id, email: user.email, username: user.username };
 	} catch (error) {
 		console.error('Error checking user credentials', error);
 		throw error;
-	} finally {
-		await prisma.$disconnect();
 	}
 }
 
