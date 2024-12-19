@@ -57,7 +57,7 @@ async function checkCredentials(identification, password) {
 		};
 	} catch (error) {
 		console.error('Error checking user credentials:', error.message);
-		throw new Error('Failed to validate user credentials');
+		throw error;
 	}
 }
 

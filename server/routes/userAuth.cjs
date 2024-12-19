@@ -20,7 +20,7 @@ router.post('/new', async (req, res) => {
 		}
 	} catch (error) {
 		console.error('Error during user creation:', error);
-		return res.status(500).json({ error: 'Internal server error' });
+		return res.status(500).json({ error: error.message });
 	}
 });
 
@@ -41,7 +41,10 @@ router.post('/login', async (req, res) => {
 		}
 	} catch (error) {
 		console.error('Error during user login:', error);
-		return res.status(500).json({ error: 'Internal server error' });
+		if (error.message.includes('Unable to find matching credentials')) {
+			return res.status(400).json({ error: error.message });
+		}
+		return res.status(500).json({ error: error.message });
 	}
 });
 
