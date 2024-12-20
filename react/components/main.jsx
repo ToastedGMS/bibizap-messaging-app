@@ -4,6 +4,8 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import App from './App.jsx';
 import Login from './Login.jsx';
 import Logout from './Logout.jsx';
+import UserProfile from './UserProfile.jsx';
+import UpdateUser from './UpdateUser.jsx';
 
 const Root = () => {
 	const [accessToken, setAccessToken] = useState(null);
@@ -36,6 +38,26 @@ const Root = () => {
 					<Route
 						path="/logout"
 						element={<Logout setAccessToken={setAccessToken} />}
+					/>
+
+					<Route
+						path="/user"
+						element={
+							<UserProfile
+								userInfoState={{ userInfo, setUserInfo }}
+								setErrorMessage={setErrorMessage}
+							/>
+						}
+					/>
+
+					<Route
+						path="/user/update"
+						element={
+							<UpdateUser
+								userInfoState={{ userInfo, setUserInfo }}
+								setErrorMessage={setErrorMessage}
+							/>
+						}
 					/>
 				</Routes>
 			</BrowserRouter>
