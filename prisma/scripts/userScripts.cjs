@@ -66,4 +66,91 @@ async function dbCheckCredentials({ userInfo }) {
 	}
 }
 
-module.exports = { dbCreateUser, dbCheckCredentials };
+async function dbFetchUser(id) {
+	const idParsed = parseInt(id, 10);
+
+	try {
+		const user = await prisma.user.findFirst({
+			where: {
+				id: idParsed,
+			},
+		});
+
+		if (!user) {
+			throw new Error(
+				'Could not find your user on the database. Please try again.'
+			);
+		}
+
+		return {
+			id: user.id,
+			username: user.username,
+			bio: user.bio || 'No bio available',
+			dp: user.dp || 'default-avatar.png',
+			email: user.email,
+		};
+	} catch (error) {
+		console.error('Error fetching user information', error);
+		throw error;
+	}
+}
+
+async function dbUpdateUser({ userInfo }) {
+	const { id, username, bio, dp, email } = userInfo;
+
+	if (!id) {
+		throw new Error('User ID is required for updating');
+	}
+
+	if (!username && !bio && !dp && !email) {
+		throw new Error('No fields provided for updating the user');
+	}
+
+	try {
+		if (email) {
+			const existingEmail = await prisma.user.findFirst({
+				where: {
+					email,
+					NOT: { id }, // Exclude current user
+				},
+			});
+			if (existingEmail) {
+				throw new Error('That email address is not available');
+			}
+		}
+
+		if (username) {
+			const existingUsername = await prisma.user.findFirst({
+				where: {
+					username,
+					NOT: { id }, // Exclude current user
+				},
+			});
+			if (existingUsername) {
+				throw new Error('That username is not available');
+			}
+		}
+
+		const updatedUser = await prisma.user.update({
+			where: { id },
+			data: {
+				username: username || undefined,
+				bio: bio || undefined,
+				dp: dp || undefined,
+				email: email || undefined,
+			},
+		});
+
+		return updatedUser;
+	} catch (error) {
+		console.error('Error updating user info', error);
+		throw error;
+	}
+}
+
+module.exports = {
+	dbCreateUser,
+	dbCheckCredentials,
+	dbFetchUser,
+	dbUpdateUser,
+};
