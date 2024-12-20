@@ -4,7 +4,8 @@ import { io } from 'socket.io-client';
 
 const socket = io('http://localhost:4000');
 
-function App({ userInfo }) {
+function App({ userInfo, errorState }) {
+	const { errorMessage, setErrorMessage } = errorState;
 	const navigate = useNavigate();
 
 	useEffect(() => {
@@ -18,15 +19,24 @@ function App({ userInfo }) {
 			console.log('Disconnected from socket.');
 		});
 
+		if (userInfo === null) {
+			setErrorMessage('Please login.');
+			navigate('/login');
+		}
+
 		return () => {
 			socket.disconnect();
 		};
-	}, []);
+	}, [userInfo, navigate]);
 
 	return (
 		<>
-			<h1>Hello, {userInfo.username}</h1>
-			<button onClick={() => navigate('/logout')}>Logout</button>
+			{userInfo === null ? null : (
+				<>
+					<h1>Hello, {userInfo.username}</h1>
+					<button onClick={() => navigate('/logout')}>Logout</button>
+				</>
+			)}
 		</>
 	);
 }

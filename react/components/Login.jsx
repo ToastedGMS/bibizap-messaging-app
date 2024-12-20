@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-export default function Login({ tokenState, setUserInfo }) {
+export default function Login({ tokenState, setUserInfo, errorState }) {
 	const [identification, setIdentification] = useState('');
 	const [password, setPassword] = useState('');
 	const [loading, setLoading] = useState(false);
-	const [errorMessage, setErrorMessage] = useState(null);
+	const { errorMessage, setErrorMessage } = errorState;
 	const { accessToken, setAccessToken } = tokenState;
 	const navigate = useNavigate();
 
