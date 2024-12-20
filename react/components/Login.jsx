@@ -35,7 +35,7 @@ export default function Login({ tokenState, setUserInfo, errorState }) {
 			const data = await response.json();
 			setAccessToken(data.info.token);
 			setUserInfo(data.info.user);
-			navigate('/');
+			navigate('/user');
 
 			setIdentification('');
 			setPassword('');
