@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { io } from 'socket.io-client';
 
-const socket = io('http://localhost:4000');
+const socket = io('http://192.168.1.28:4000');
 
 function App({ userInfo, errorState }) {
 	const { errorMessage, setErrorMessage } = errorState;

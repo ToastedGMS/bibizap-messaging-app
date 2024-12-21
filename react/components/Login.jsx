@@ -15,7 +15,7 @@ export default function Login({ tokenState, setUserInfo, errorState }) {
 		setErrorMessage(null);
 
 		try {
-			const response = await fetch('http://localhost:4000/api/users/login', {
+			const response = await fetch('http://192.168.1.28:4000/api/users/login', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'Application/JSON',
@@ -41,6 +41,7 @@ export default function Login({ tokenState, setUserInfo, errorState }) {
 			setPassword('');
 		} catch (error) {
 			console.error('Error during login request:', error);
+			console.log('hello');
 			setErrorMessage('An unexpected error occurred.');
 		} finally {
 			setLoading(false);

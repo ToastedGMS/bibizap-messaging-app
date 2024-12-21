@@ -14,7 +14,7 @@ export default function UserProfile({ userInfoState, setErrorMessage }) {
 		const fetchUserInfo = async () => {
 			try {
 				const response = await fetch(
-					`http://localhost:4000/api/users/${userInfo.id}`
+					`http://192.168.1.28:4000/api/users/${userInfo.id}`
 				);
 
 				if (!response.ok) {
