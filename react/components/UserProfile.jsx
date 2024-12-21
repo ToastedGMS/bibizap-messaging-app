@@ -43,20 +43,17 @@ export default function UserProfile({ userInfoState, setErrorMessage }) {
 							borderRadius: '50%',
 							objectFit: 'cover',
 						}}
-						src={
-							userInfo.dp === 'default-avatar.png'
-								? 'default-avatar.png'
-								: `${userInfo.dp}`
-						}
-						alt={
-							userInfo.dp === 'default-avatar.png'
-								? 'Default Profile Picture'
-								: 'User Profile Picture'
-						}
+						src={userInfo.dp}
+						alt={'User Profile Picture'}
 					/>
 					<h1>{userInfo.username}</h1>
 					<p>{userInfo.bio}</p>
 					<p>{userInfo.email}</p>
+					<button onClick={() => navigate('/user/friendships')}>
+						Friendships
+					</button>
+					<br />
+					<br />
 					<button onClick={() => navigate('/user/update')}>Edit Profile</button>
 					<br />
 					<br />
