@@ -1,7 +1,11 @@
 const { fetchUser, updateUser } = require('../controllers/userInfo.cjs');
 
 const router = require('express').Router();
-const { createUser, checkCredentials } = require('../controllers/userAuth.cjs');
+const {
+	createUser,
+	checkCredentials,
+	verifyToken,
+} = require('../controllers/userAuth.cjs');
 
 router.post('/new', async (req, res) => {
 	const { email, password, bio, dp, username } = req.body;
@@ -70,7 +74,7 @@ router.get('/:id', async (req, res) => {
 	}
 });
 
-router.put('/:id', async (req, res) => {
+router.put('/:id', verifyToken, async (req, res) => {
 	const { id } = req.params;
 
 	const { username, bio, dp, email } = req.body;
