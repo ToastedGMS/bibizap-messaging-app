@@ -41,16 +41,11 @@ export default function Login({ tokenState, setUserInfo, errorState }) {
 			setPassword('');
 		} catch (error) {
 			console.error('Error during login request:', error);
-			console.log('hello');
 			setErrorMessage('An unexpected error occurred.');
 		} finally {
 			setLoading(false);
 		}
 	};
-
-	useEffect(() => {
-		console.log('token', accessToken);
-	}, [accessToken]);
 
 	return (
 		<>
