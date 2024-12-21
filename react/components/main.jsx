@@ -6,6 +6,7 @@ import Login from './Login.jsx';
 import Logout from './Logout.jsx';
 import UserProfile from './UserProfile.jsx';
 import UpdateUser from './UpdateUser.jsx';
+import Friends from './Friends.jsx';
 
 const Root = () => {
 	const [accessToken, setAccessToken] = useState(null);
@@ -54,6 +55,17 @@ const Root = () => {
 						path="/user/update"
 						element={
 							<UpdateUser
+								userInfoState={{ userInfo, setUserInfo }}
+								setErrorMessage={setErrorMessage}
+								accessToken={accessToken}
+							/>
+						}
+					/>
+
+					<Route
+						path="user/friendships"
+						element={
+							<Friends
 								userInfoState={{ userInfo, setUserInfo }}
 								setErrorMessage={setErrorMessage}
 								accessToken={accessToken}
