@@ -14,18 +14,35 @@ datasource db {
 }
 
 model User {
-  id       Int      @id @default(autoincrement())
-  email    String   @unique
-  username String   @unique
-  password String
-  bio String? @db.VarChar(140)
-  dp       String?   // URL to the user's display picture
-  chats    ChatUser[] // Relationship with Chat via join table
-  friends User[] @relation("Friendship")
-  friendOf User[] @relation("Friendship")
-  sentMessages Message[] @relation(name: "Author")
-  receivedMessages Message[] @relation(name: "Recipient")
+  id              Int             @id @default(autoincrement())
+  email           String          @unique
+  username        String          @unique
+  password        String
+  bio             String?         @db.VarChar(140)
+  dp              String?         // URL to the user's display picture
+  chats           ChatUser[]      // Relationship with Chat via join table
+  friends         User[]          @relation("Friendship")
+  friendOf        User[]          @relation("Friendship")
+  sentMessages    Message[]       @relation(name: "Author")
+  receivedMessages Message[]      @relation(name: "Recipient")
+
+  // Friend request relations
+  sentRequests    FriendRequest[] @relation("SentRequests")
+  receivedRequests FriendRequest[] @relation("ReceivedRequests")
 }
+
+model FriendRequest {
+  id         Int      @id @default(autoincrement())
+  senderId   Int
+  receiverId Int
+  status     String   // Could be 'pending', 'accepted', 'rejected'
+
+  sender     User     @relation("SentRequests", fields: [senderId], references: [id])
+  receiver   User     @relation("ReceivedRequests", fields: [receiverId], references: [id])
+
+  @@unique([senderId, receiverId]) // Ensures one request per pair of users
+}
+
 
 model Message {
   id          Int      @id @default(autoincrement())
