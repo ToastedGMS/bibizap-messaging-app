@@ -7,8 +7,9 @@ export default function Friends({
 	accessToken,
 }) {
 	const navigate = useNavigate();
-	const { userInfo, setUserInfo } = userInfoState;
+	const { userInfo } = userInfoState;
 	const [loading, setLoading] = useState(false);
+	const [updating, setUpdating] = useState(false);
 	const [friendRequests, setFriendRequests] = useState({
 		accepted: [],
 		sentPending: [],
@@ -16,76 +17,123 @@ export default function Friends({
 		receivedRejected: [],
 	});
 
+	const fetchFriendships = async () => {
+		setLoading(true);
+		try {
+			const response = await fetch(
+				'http://192.168.1.28:4000/api/friends/requests',
+				{
+					method: 'GET',
+					headers: {
+						authorization: `Bearer ${accessToken}`,
+					},
+				}
+			);
+
+			if (!response.ok) {
+				console.error('Failed to fetch friendship info');
+			}
+
+			const data = await response.json();
+			console.log('data', data);
+
+			const groupedRequests = {
+				accepted: [],
+				sentPending: [],
+				receivedPending: [],
+				receivedRejected: [],
+			};
+
+			// Loop through all friend requests and categorize them
+			data.friendRequests.received.accepted.forEach((request) => {
+				groupedRequests.accepted.push(request);
+			});
+
+			data.friendRequests.sent.accepted.forEach((request) => {
+				groupedRequests.accepted.push(request);
+			});
+
+			data.friendRequests.sent.pending.forEach((request) => {
+				groupedRequests.sentPending.push(request); // Sent by the user
+			});
+
+			data.friendRequests.received.pending.forEach((request) => {
+				groupedRequests.receivedPending.push(request); // Received by the user
+			});
+
+			data.friendRequests.received.rejected.forEach((request) => {
+				groupedRequests.receivedRejected.push(request); // Received by the user
+			});
+
+			setFriendRequests(groupedRequests);
+		} catch (error) {
+			setErrorMessage('Error fetching user data');
+			console.error('Error fetching user data:', error);
+		} finally {
+			setLoading(false);
+			setUpdating(false);
+		}
+	};
+
+	async function handleClick(title, request) {
+		setUpdating(true);
+		try {
+			const response = await fetch(
+				`http://192.168.1.28:4000/api/friends/${title}`,
+				{
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+						authorization: `Bearer ${accessToken}`,
+					},
+					body: JSON.stringify({ senderId: request.senderId }),
+				}
+			);
+
+			if (!response.ok) {
+				throw new Error('Failed to accept the request');
+			}
+
+			const data = await response.json();
+
+			fetchFriendships();
+		} catch (error) {
+			console.error('Error accepting the request:', error);
+		}
+	}
+
+	const acceptButton = {
+		title: 'accept',
+		label: 'Accept',
+		onClick: (request) => handleClick('accept', request),
+	};
+
+	const rejectButton = {
+		title: 'reject',
+		label: 'Reject',
+		onClick: (request) => handleClick('reject', request),
+	};
+
+	const chatButton = {
+		label: 'Chat',
+		onClick: (request) => {
+			// Handle chat initiation logic here
+			console.log('Starting chat with:', request.sender.username);
+			// Redirect to chat screen or open a chat window
+		},
+	};
+
 	useEffect(() => {
 		if (userInfo === null) {
 			console.log('userInfo', userInfo);
 			setErrorMessage('Please login.');
 			navigate('/login');
+		} else {
+			fetchFriendships();
 		}
-
-		const fetchFriendships = async () => {
-			setLoading(true);
-			try {
-				const response = await fetch(
-					'http://192.168.1.28:4000/api/friends/requests',
-					{
-						method: 'GET',
-						headers: {
-							authorization: `Bearer ${accessToken}`,
-						},
-					}
-				);
-
-				if (!response.ok) {
-					console.error('Failed to fetch friendship info');
-				}
-
-				const data = await response.json();
-				console.log('data', data);
-
-				// Group requests based on the new logic
-				const groupedRequests = {
-					accepted: [],
-					sentPending: [],
-					receivedPending: [],
-					receivedRejected: [],
-				};
-
-				// Loop through all friend requests and categorize them
-				data.friendRequests.received.accepted.forEach((request) => {
-					groupedRequests.accepted.push(request);
-				});
-
-				data.friendRequests.sent.accepted.forEach((request) => {
-					groupedRequests.accepted.push(request);
-				});
-
-				data.friendRequests.sent.pending.forEach((request) => {
-					groupedRequests.sentPending.push(request); // Sent by the user
-				});
-
-				data.friendRequests.received.pending.forEach((request) => {
-					groupedRequests.receivedPending.push(request); // Received by the user
-				});
-
-				// Received rejected requests
-				data.friendRequests.received.rejected.forEach((request) => {
-					groupedRequests.receivedRejected.push(request); // Received by the user
-				});
-
-				setFriendRequests(groupedRequests);
-			} catch (error) {
-				setErrorMessage('Error fetching user data');
-				console.error('Error fetching user data:', error);
-			} finally {
-				setLoading(false);
-			}
-		};
-
-		fetchFriendships();
 	}, [userInfo, navigate, accessToken, setErrorMessage]);
 
-	const renderFriendRequests = (requests) => {
+	const renderFriendRequests = (requests, ...opts) => {
 		return requests.map((request) => (
 			<div key={request.id} className="friend-request">
 				<div>
@@ -110,6 +158,11 @@ export default function Friends({
 							<div className="friend-request-info">
 								<p>{request.sender.username}</p>
 							</div>
+							{opts.map((button, index) => (
+								<button key={index} onClick={() => button.onClick(request)}>
+									{button.label}
+								</button>
+							))}
 						</div>
 					) : (
 						// If the current user is the sender, show receiver's details
@@ -132,6 +185,11 @@ export default function Friends({
 							<div className="friend-request-info">
 								<p>{request.receiver.username}</p>
 							</div>
+							{opts.map((button, index) => (
+								<button key={index} onClick={() => button.onClick(request)}>
+									{button.label}
+								</button>
+							))}
 						</div>
 					)}
 				</div>
@@ -141,15 +199,15 @@ export default function Friends({
 
 	return (
 		<>
-			{loading === true ? (
-				<>
-					<h1>Loading...</h1>
-				</>
+			{loading ? (
+				<h1>Loading...</h1>
+			) : updating ? (
+				<h1>Updating friends list...</h1>
 			) : (
 				<div className="friendship-container">
 					<div className="friendship-category">
 						<h3>Accepted Friend Requests</h3>
-						{renderFriendRequests(friendRequests.accepted)}
+						{renderFriendRequests(friendRequests.accepted, chatButton)}
 					</div>
 
 					<div className="friendship-category">
@@ -159,7 +217,11 @@ export default function Friends({
 
 					<div className="friendship-category">
 						<h3>Received Pending Friend Requests</h3>
-						{renderFriendRequests(friendRequests.receivedPending)}
+						{renderFriendRequests(
+							friendRequests.receivedPending,
+							acceptButton,
+							rejectButton
+						)}
 					</div>
 
 					<div className="friendship-category">
