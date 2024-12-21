@@ -56,6 +56,7 @@ const Root = () => {
 							<UpdateUser
 								userInfoState={{ userInfo, setUserInfo }}
 								setErrorMessage={setErrorMessage}
+								accessToken={accessToken}
 							/>
 						}
 					/>

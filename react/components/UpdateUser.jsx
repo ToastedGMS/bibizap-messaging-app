@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-export default function UpdateUser({ userInfoState, setErrorMessage }) {
+export default function UpdateUser({
+	userInfoState,
+	setErrorMessage,
+	accessToken,
+}) {
 	const { userInfo, setUserInfo } = userInfoState;
 	const [username, setUsername] = useState('');
 	const [bio, setBio] = useState('');
@@ -40,6 +44,7 @@ export default function UpdateUser({ userInfoState, setErrorMessage }) {
 					method: 'PUT',
 					headers: {
 						'Content-Type': 'application/json',
+						Authorization: `Bearer ${accessToken}`,
 					},
 					body: JSON.stringify(updatedUserInfo),
 				}
