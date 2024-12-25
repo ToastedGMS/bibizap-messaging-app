@@ -1,6 +1,9 @@
 import React from 'react';
 
-const Message = ({ username, text }) => {
+const Message = ({ message }) => {
+	const { textContent, authorId, recipientId, chatId, createdAt, authorName } =
+		message;
+
 	return (
 		<div
 			className="message"
@@ -12,8 +15,9 @@ const Message = ({ username, text }) => {
 				paddingRight: '2em',
 			}}
 		>
-			<p className="message-username">{username}</p>
-			<p className="message-text">{text}</p>
+			<h4>{authorName}</h4>
+			<p>{textContent}</p>
+			<p>{createdAt}</p>
 		</div>
 	);
 };

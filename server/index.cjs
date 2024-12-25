@@ -1,3 +1,4 @@
+const prisma = require('../prisma/client.cjs');
 const express = require('express');
 const app = express();
 const cors = require('cors');
@@ -50,8 +51,83 @@ io.on('connection', (socket) => {
 		}
 	});
 
-	socket.on('sendMessage', (message) => {
-		io.to(message.roomName).emit('message', message);
+	socket.on(
+		'sendMessage',
+		async ({ textContent, authorId, recipientId, chatId }) => {
+			const authorIdInt = parseInt(authorId, 10);
+			const recipientIdInt = parseInt(recipientId, 10);
+
+			let chat = await prisma.chat.findUnique({
+				where: { id: chatId },
+			});
+
+			if (!chat) {
+				try {
+					chat = await prisma.chat.create({
+						data: {
+							id: chatId,
+							isGroup: false,
+							members: {
+								create: [
+									{ user: { connect: { id: authorIdInt } } },
+									{ user: { connect: { id: recipientIdInt } } },
+								],
+							},
+						},
+					});
+				} catch (error) {
+					console.error('Error creating chat:', error);
+					return;
+				}
+			}
+
+			try {
+				const newMessage = await prisma.message.create({
+					data: {
+						textContent,
+						authorId: authorIdInt,
+						recipientId: recipientIdInt,
+						chatId: chat.id,
+						createdAt: new Date(),
+					},
+				});
+
+				// Fetch usernames
+				const [author, recipient] = await Promise.all([
+					prisma.user.findUnique({ where: { id: authorIdInt } }),
+					prisma.user.findUnique({ where: { id: recipientIdInt } }),
+				]);
+
+				const messageWithUsernames = {
+					...newMessage,
+					authorName: author.username,
+					recipientName: recipient.username,
+				};
+
+				// Emit the new message with usernames to the chat room
+				io.to(chat.id).emit('message', messageWithUsernames);
+			} catch (error) {
+				console.error('Error creating message:', error);
+			}
+		}
+	);
+
+	socket.on('joinRoom', async (roomName) => {
+		try {
+			const chat = await prisma.chat.findUnique({
+				where: { id: roomName },
+				include: {
+					messages: {
+						orderBy: { createdAt: 'asc' },
+					},
+				},
+			});
+
+			socket.emit('roomMessages', chat.messages);
+			socket.join(roomName);
+		} catch (error) {
+			console.error('Error fetching messages for room:', error);
+		}
 	});
 
 	socket.on('disconnect', () => {

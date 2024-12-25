@@ -54,11 +54,11 @@ model Message {
   createdAt   DateTime @default(now())
   imgContent  String?  // Optional field to store image URL
   chat        Chat     @relation(fields: [chatId], references: [id], onDelete: Cascade) // Message belongs to a Chat
-  chatId      Int
+  chatId      String
 }
 
 model Chat {
-  id        Int       @id @default(autoincrement())
+  id        String       @id 
   isGroup   Boolean   // Distinguish between group chats and individual chats
   groupDp   String?   // Group display picture, null for individual chats
   title     String? @db.VarChar(100)  // Group title, null for individual chats
@@ -72,7 +72,7 @@ model Chat {
 model ChatUser {
   id      Int   @id @default(autoincrement())
   chat    Chat  @relation(fields: [chatId], references: [id], onDelete: Cascade) 
-  chatId  Int
+  chatId  String
   user    User  @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId  Int
   joinedAt DateTime @default(now()) // Optional: track when the user joined the chat
