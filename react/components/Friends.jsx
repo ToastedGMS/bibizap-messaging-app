@@ -35,7 +35,6 @@ export default function Friends({
 			}
 
 			const data = await response.json();
-			console.log('data', data);
 
 			const groupedRequests = {
 				accepted: [],
