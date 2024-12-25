@@ -1,13 +1,34 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-export default function Login({ tokenState, setUserInfo, errorState }) {
+export default function Login({
+	tokenState,
+	setUserInfo,
+	errorState,
+	socketIdState,
+	socket,
+}) {
 	const [identification, setIdentification] = useState('');
 	const [password, setPassword] = useState('');
 	const [loading, setLoading] = useState(false);
 	const { errorMessage, setErrorMessage } = errorState;
 	const { accessToken, setAccessToken } = tokenState;
+	const { socketID, setSocketID } = socketIdState;
+
 	const navigate = useNavigate();
+
+	useEffect(() => {
+		if (accessToken) {
+			socket.on('connect', () => {
+				console.log(`Connected with socket ID: ${socket.id}`);
+				setSocketID(socket.id);
+			});
+		}
+
+		return () => {
+			socket.off('connect');
+		};
+	}, [accessToken, socket, setSocketID]);
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();

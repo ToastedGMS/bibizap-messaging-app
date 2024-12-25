@@ -13,8 +13,12 @@ app.use(express.json());
 const io = new Server(http, {
 	cors: {
 		origin: '*',
+		methods: ['GET', 'POST'],
+		credentials: true,
 	},
 });
+
+let activeRooms = {};
 
 const userAuthRouter = require('./routes/userAuth.cjs');
 app.use('/api/users', userAuthRouter);
@@ -22,7 +26,33 @@ const friendshipRouter = require('./routes/friendRouter.cjs');
 app.use('/api/friends', friendshipRouter);
 
 io.on('connection', (socket) => {
-	console.log(`⚡: ${socket.id} user just connected!`);
+	console.log(`${socket.id} user just connected!`);
+
+	socket.on('checkRoom', (roomName, callback) => {
+		const exists = activeRooms[roomName] !== undefined;
+		callback(exists);
+	});
+
+	socket.on('createRoom', (roomName) => {
+		activeRooms[roomName] = { users: [socket.id] };
+		socket.join(roomName);
+		console.log(`Room created: ${roomName}`);
+	});
+
+	socket.on('joinRoom', (roomName) => {
+		if (activeRooms[roomName]) {
+			// Join the room and add the user to the room's user list
+			activeRooms[roomName].users.push(socket.id);
+			socket.join(roomName);
+			console.log(`User ${socket.id} joined room: ${roomName}`);
+		} else {
+			console.log(`Room ${roomName} does not exist.`);
+		}
+	});
+
+	socket.on('sendMessage', (message) => {
+		io.to(message.roomName).emit('message', message);
+	});
 
 	socket.on('disconnect', () => {
 		console.log('🔥: A user disconnected');

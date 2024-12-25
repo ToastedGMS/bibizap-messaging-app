@@ -57,6 +57,9 @@ export default function UserProfile({ userInfoState, setErrorMessage }) {
 					<button onClick={() => navigate('/user/update')}>Edit Profile</button>
 					<br />
 					<br />
+					<button onClick={() => navigate('/chats')}>Chats</button>
+					<br />
+					<br />
 					<button onClick={() => navigate('/logout')}>Logout</button>
 				</>
 			)}

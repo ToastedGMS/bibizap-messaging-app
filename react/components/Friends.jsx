@@ -5,6 +5,8 @@ export default function Friends({
 	userInfoState,
 	setErrorMessage,
 	accessToken,
+	socketID,
+	socket,
 }) {
 	const navigate = useNavigate();
 	const { userInfo } = userInfoState;
@@ -116,9 +118,17 @@ export default function Friends({
 	const chatButton = {
 		label: 'Chat',
 		onClick: (request) => {
-			// Handle chat initiation logic here
-			console.log('Starting chat with:', request.sender.username);
-			// Redirect to chat screen or open a chat window
+			const roomName = `${request.senderId}_${request.receiverId}`;
+			socket.emit('checkRoom', roomName, (exists) => {
+				if (exists) {
+					socket.emit('joinRoom', roomName);
+					console.log('Joining existing room:', roomName);
+				} else {
+					socket.emit('createRoom', roomName);
+					console.log('Creating a new room:', roomName);
+				}
+			});
+			navigate('/chats/chat', { state: { roomName } });
 		},
 	};
 

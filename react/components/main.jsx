@@ -1,31 +1,26 @@
 import { StrictMode, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import App from './App.jsx';
 import Login from './Login.jsx';
 import Logout from './Logout.jsx';
 import UserProfile from './UserProfile.jsx';
 import UpdateUser from './UpdateUser.jsx';
 import Friends from './Friends.jsx';
+import ChatCollection from './ChatCollection.jsx';
+import Chat from './Chat.jsx';
+import { io } from 'socket.io-client';
+const socket = io('http://192.168.1.28:4000');
 
 const Root = () => {
 	const [accessToken, setAccessToken] = useState(null);
 	const [userInfo, setUserInfo] = useState(null);
 	const [errorMessage, setErrorMessage] = useState(null);
+	const [socketID, setSocketID] = useState(null);
 
 	return (
 		<StrictMode>
 			<BrowserRouter>
 				<Routes>
-					<Route
-						path="/"
-						element={
-							<App
-								userInfo={userInfo}
-								errorState={{ errorMessage, setErrorMessage }}
-							/>
-						}
-					/>
 					<Route
 						path="/login"
 						element={
@@ -33,6 +28,8 @@ const Root = () => {
 								tokenState={{ accessToken, setAccessToken }}
 								setUserInfo={setUserInfo}
 								errorState={{ errorMessage, setErrorMessage }}
+								socketIdState={{ socketID, setSocketID }}
+								socket={socket}
 							/>
 						}
 					/>
@@ -63,12 +60,38 @@ const Root = () => {
 					/>
 
 					<Route
-						path="user/friendships"
+						path="/user/friendships"
 						element={
 							<Friends
 								userInfoState={{ userInfo, setUserInfo }}
 								setErrorMessage={setErrorMessage}
 								accessToken={accessToken}
+								socketID={socketID}
+								socket={socket}
+							/>
+						}
+					/>
+
+					<Route
+						path="/chats"
+						element={
+							<ChatCollection
+								accessToken={accessToken}
+								userInfoState={{ userInfo, setUserInfo }}
+								setErrorMessage={setErrorMessage}
+							/>
+						}
+					/>
+
+					<Route
+						path="/chats/chat"
+						element={
+							<Chat
+								accessToken={accessToken}
+								userInfoState={{ userInfo, setUserInfo }}
+								setErrorMessage={setErrorMessage}
+								socket={socket}
+								socketID={socketID}
 							/>
 						}
 					/>
