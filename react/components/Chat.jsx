@@ -21,6 +21,7 @@ export default function Chat({
 		recipientId = senderId !== userInfo.id.toString() ? senderId : receiverId;
 	}
 
+	// Effect for handling socket connections and user authentication
 	useEffect(() => {
 		if (userInfo === null) {
 			console.log('userInfo', userInfo);
@@ -54,6 +55,12 @@ export default function Chat({
 		};
 	}, [userInfo, navigate, setErrorMessage, socket]);
 
+	// Effect for scrolling the send button into view when messages update
+	useEffect(() => {
+		const sendBtn = document.querySelector('.sendBtn');
+		sendBtn.scrollIntoView({ behavior: 'smooth' });
+	}, [messages]);
+
 	return (
 		<>
 			<div className="messages">
@@ -69,6 +76,7 @@ export default function Chat({
 					placeholder="Type your message..."
 				/>
 				<button
+					className="sendBtn"
 					onClick={(e) => {
 						e.preventDefault();
 						if (messageText.trim() && roomName) {

@@ -1,6 +1,12 @@
 import { StrictMode, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import {
+	BrowserRouter,
+	Routes,
+	Route,
+	useNavigate,
+	Navigate,
+} from 'react-router-dom';
 import Login from './Login.jsx';
 import Logout from './Logout.jsx';
 import UserProfile from './UserProfile.jsx';
@@ -9,6 +15,7 @@ import Friends from './Friends.jsx';
 import ChatCollection from './ChatCollection.jsx';
 import Chat from './Chat.jsx';
 import { io } from 'socket.io-client';
+import Signup from './Signup.jsx';
 const socket = io('http://192.168.1.28:4000');
 
 const Root = () => {
@@ -21,6 +28,9 @@ const Root = () => {
 		<StrictMode>
 			<BrowserRouter>
 				<Routes>
+					<Route path="/" element={<Navigate to="/login" />} />
+					<Route path="/signup" element={<Signup />} />
+
 					<Route
 						path="/login"
 						element={
