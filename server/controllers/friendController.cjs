@@ -5,14 +5,14 @@ const {
 	dbRejectRequest,
 } = require('../../prisma/scripts/friendScripts.cjs');
 
-async function sendRequest(userId, targetUserId) {
-	if (!userId || !targetUserId) {
+async function sendRequest(userId, targetUserName) {
+	if (!userId || !targetUserName) {
 		throw new Error(
-			'Both userId and targetUserId are required to send a friend request.'
+			'Both userId and targetUserName are required to send a friend request.'
 		);
 	}
 
-	const friendInfo = { userId, targetUserId };
+	const friendInfo = { userId, targetUserName };
 
 	try {
 		const newRequest = await dbSendRequest({ friendInfo });

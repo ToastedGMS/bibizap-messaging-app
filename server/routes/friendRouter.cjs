@@ -8,14 +8,14 @@ const {
 const { verifyToken } = require('../controllers/userAuth.cjs');
 
 router.post('/send', verifyToken, async (req, res) => {
-	const { targetUserId } = req.body;
+	const { targetUserName } = req.body;
 
-	if (!targetUserId) {
-		return res.status(400).json({ error: 'Target user ID is required' });
+	if (!targetUserName) {
+		return res.status(400).json({ error: 'Target username is required' });
 	}
 
 	try {
-		const result = await sendRequest(req.user.id, targetUserId);
+		const result = await sendRequest(req.user.id, targetUserName);
 		return res
 			.status(201)
 			.json({ message: 'Friend request sent', request: result });

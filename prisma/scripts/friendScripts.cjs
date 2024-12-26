@@ -1,15 +1,31 @@
 const prisma = require('../client.cjs');
 
 async function dbSendRequest({ friendInfo }) {
-	const { userId, targetUserId } = friendInfo;
+	const { userId, targetUserName } = friendInfo;
 
-	if (!userId || !targetUserId) {
+	if (!userId || !targetUserName) {
 		throw new Error(
-			'Both userId and targetUserId are required to send a friend request.'
+			'Both userId and targetUserName are required to send a friend request.'
 		);
 	}
 
 	try {
+		// Fetch the user ID of the target user by username
+		const targetUser = await prisma.user.findUnique({
+			where: {
+				username: targetUserName,
+			},
+			select: {
+				id: true,
+			},
+		});
+
+		if (!targetUser) {
+			throw new Error('Target user not found.');
+		}
+
+		const targetUserId = targetUser.id;
+
 		const sendRequest = await prisma.friendRequest.create({
 			data: {
 				senderId: userId,

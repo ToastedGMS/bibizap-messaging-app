@@ -18,6 +18,8 @@ export default function Friends({
 		receivedPending: [],
 		receivedRejected: [],
 	});
+	const [targetUserName, setTargetUserName] = useState(''); // New state for the target username
+	const [sendingRequest, setSendingRequest] = useState(false); // New state for sending request
 
 	const fetchFriendships = async () => {
 		setLoading(true);
@@ -73,6 +75,48 @@ export default function Friends({
 		} finally {
 			setLoading(false);
 			setUpdating(false);
+		}
+	};
+
+	// Function to send a friend request to the target username
+	const sendFriendRequest = async () => {
+		if (!targetUserName) {
+			setErrorMessage('Please provide a username');
+			return;
+		}
+
+		setSendingRequest(true);
+
+		try {
+			const response = await fetch(
+				'http://192.168.1.28:4000/api/friends/send',
+				{
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+						authorization: `Bearer ${accessToken}`,
+					},
+					body: JSON.stringify({
+						targetUserName,
+					}),
+				}
+			);
+
+			if (!response.ok) {
+				const errorData = await response.json();
+				setErrorMessage(errorData.error);
+				return;
+			}
+
+			const data = await response.json();
+			alert(data.message); // Show success message to the user
+			setTargetUserName(''); // Reset the input field
+			fetchFriendships(); // Refresh friend requests list
+		} catch (error) {
+			setErrorMessage('Error sending friend request');
+			console.error('Error sending friend request:', error);
+		} finally {
+			setSendingRequest(false);
 		}
 	};
 
@@ -214,6 +258,20 @@ export default function Friends({
 				<h1>Updating friends list...</h1>
 			) : (
 				<div className="friendship-container">
+					{/* New section to send a friend request */}
+					<div className="send-friend-request">
+						<h3>Send Friend Request</h3>
+						<input
+							type="text"
+							placeholder="Enter username"
+							value={targetUserName}
+							onChange={(e) => setTargetUserName(e.target.value)}
+						/>
+						<button onClick={sendFriendRequest} disabled={sendingRequest}>
+							{sendingRequest ? 'Sending...' : 'Send Request'}
+						</button>
+					</div>
+
 					<div className="friendship-category">
 						<h3>Accepted Friend Requests</h3>
 						{renderFriendRequests(friendRequests.accepted, chatButton)}
