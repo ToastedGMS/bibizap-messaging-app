@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import styles from '../stylesheets/Login.module.css';
 
 export default function Login({
 	tokenState,
@@ -73,35 +74,48 @@ export default function Login({
 			{loading ? (
 				<h1>Loading...</h1>
 			) : (
-				<div>
-					<form onSubmit={handleSubmit}>
-						<div>
-							<label htmlFor="identification">Email or Username</label>
-							<input
-								onChange={(e) => setIdentification(e.target.value)}
-								type="text"
-								name="identification"
-								id="identification"
-								required
-								placeholder="Enter email or username"
-								value={identification}
-							/>
-						</div>
-						<div>
-							<label htmlFor="password">Password</label>
-							<input
-								onChange={(e) => setPassword(e.target.value)}
-								type="password"
-								name="password"
-								id="password"
-								required
-								placeholder="Enter your password"
-								value={password}
-							/>
-						</div>
-						<p style={{ color: 'red' }}>{errorMessage}</p>
-						<button>Login</button>
-					</form>
+				<div className={styles.container}>
+					<h1>We're glad you returned! :)</h1>
+					<div className={styles.FormContainer}>
+						<form onSubmit={handleSubmit}>
+							<div className={styles.formDiv}>
+								<label htmlFor="identification">Email or Username</label>
+								<br />
+								<input
+									onChange={(e) => setIdentification(e.target.value)}
+									type="text"
+									name="identification"
+									id="identification"
+									required
+									placeholder="johndoe@yahoo.com"
+									value={identification}
+								/>
+							</div>
+							<div className={styles.formDiv}>
+								<label htmlFor="password">Password</label>
+								<br />
+								<input
+									onChange={(e) => setPassword(e.target.value)}
+									type="password"
+									name="password"
+									id="password"
+									required
+									placeholder="Enter your password"
+									value={password}
+								/>
+							</div>
+							<p style={{ color: 'red' }}>{errorMessage}</p>
+							<button className={styles.loginButton}>Login</button>
+						</form>
+						<button
+							className={styles.loginButton}
+							onClick={() => {
+								navigate('/signup');
+							}}
+						>
+							Signup
+						</button>
+					</div>
 				</div>
 			)}
 		</>

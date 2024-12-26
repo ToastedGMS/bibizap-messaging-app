@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import styles from '../stylesheets/Signup.module.css';
 
 export default function Signup() {
 	const [email, setEmail] = useState('');
@@ -55,49 +56,63 @@ export default function Signup() {
 			{loading ? (
 				<h1>Loading...</h1>
 			) : (
-				<div>
+				<div className={styles.container}>
 					<h1>Signup</h1>
-					<form onSubmit={handleSubmit}>
-						<div>
-							<label htmlFor="email">Email</label>
-							<input
-								onChange={(e) => setEmail(e.target.value)}
-								type="email"
-								name="email"
-								id="email"
-								required
-								placeholder="Enter your email"
-								value={email}
-							/>
-						</div>
-						<div>
-							<label htmlFor="password">Password</label>
-							<input
-								onChange={(e) => setPassword(e.target.value)}
-								type="password"
-								name="password"
-								id="password"
-								required
-								placeholder="Enter your password"
-								value={password}
-							/>
-						</div>
-						<div>
-							<label htmlFor="username">Username</label>
-							<input
-								onChange={(e) => setUsername(e.target.value)}
-								type="text"
-								name="username"
-								id="username"
-								required
-								placeholder="Enter your username"
-								value={username}
-							/>
-						</div>
-
-						<p style={{ color: 'red' }}>{errorMessage}</p>
-						<button type="submit">Signup</button>
-					</form>
+					<div className={styles.FormContainer}>
+						<form onSubmit={handleSubmit}>
+							<div className={styles.formDiv}>
+								<label htmlFor="email">Email</label>
+								<br />
+								<input
+									onChange={(e) => setEmail(e.target.value)}
+									type="email"
+									name="email"
+									id="email"
+									required
+									placeholder="Enter your email"
+									value={email}
+								/>
+							</div>
+							<div className={styles.formDiv}>
+								<label htmlFor="password">Password</label>
+								<br />
+								<input
+									onChange={(e) => setPassword(e.target.value)}
+									type="password"
+									name="password"
+									id="password"
+									required
+									placeholder="Enter your password"
+									value={password}
+								/>
+							</div>
+							<div className={styles.formDiv}>
+								<label htmlFor="username">Username</label>
+								<br />
+								<input
+									onChange={(e) => setUsername(e.target.value)}
+									type="text"
+									name="username"
+									id="username"
+									required
+									placeholder="Enter your username"
+									value={username}
+								/>
+							</div>
+							<p style={{ color: 'red' }}>{errorMessage}</p>
+							<button className={styles.signUpButton} type="submit">
+								Signup
+							</button>
+						</form>
+						<button
+							className={styles.signUpButton}
+							onClick={() => {
+								navigate('/login');
+							}}
+						>
+							Login
+						</button>
+					</div>
 				</div>
 			)}
 		</>

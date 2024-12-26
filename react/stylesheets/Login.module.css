@@ -1,0 +1,78 @@
+body {
+	margin: 0%;
+	background-color: rgba(245, 130, 130, 0.363);
+	font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+.container {
+	perspective: 1000px;
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+.FormContainer {
+	padding: 1em;
+	border: 3px solid rgba(128, 128, 128, 0.315);
+	border-radius: 15px;
+	box-shadow: 0px 5px 10px black;
+	background-color: khaki;
+	text-align: center;
+}
+
+h1 {
+	width: 10px;
+	animation-name: spin, depth;
+	animation-timing-function: linear;
+	animation-iteration-count: infinite;
+	animation-duration: 5s;
+}
+@keyframes spin {
+	from {
+		transform: rotateY(0deg);
+	}
+	to {
+		transform: rotateY(-360deg);
+	}
+}
+@keyframes depth {
+	0% {
+		text-shadow: 0 0 black;
+	}
+	25% {
+		text-shadow: 1px 0 black, 2px 0 black, 3px 0 black, 4px 0 black, 5px 0 black;
+	}
+	50% {
+		text-shadow: 0 0 black;
+	}
+	75% {
+		text-shadow: -1px 0 black, -2px 0 black, -3px 0 black, -4px 0 black,
+			-5px 0 black;
+	}
+	100% {
+		text-shadow: 0 0 black;
+	}
+}
+
+.formDiv > input {
+	border-radius: 15px;
+	padding: 0.2rem;
+}
+
+.formDiv > input:focus {
+	border: 2px solid black;
+	background-color: rgba(214, 197, 197, 0.8);
+}
+
+.loginButton {
+	border-radius: 15px;
+	padding: 0.3rem;
+	min-width: 100%;
+}
+
+button:hover {
+	cursor: pointer;
+	background-color: rgba(245, 130, 130, 0.363);
+}

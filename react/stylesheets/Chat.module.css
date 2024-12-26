@@ -1,0 +1,25 @@
+/* Chat.module.css */
+.messages {
+	display: flex;
+	flex-direction: column;
+	padding: 10px;
+	overflow-y: auto;
+	border: 1px solid #ddd;
+}
+
+.inputBox {
+	display: flex;
+	padding: 10px;
+}
+
+.inputBox input {
+	flex: 1;
+	padding: 10px;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+	margin-right: 10px;
+}
+
+.sendBtn:hover {
+	background-color: #0056b3;
+}

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import styles from '../stylesheets/Friends.module.css';
 
 export default function Friends({
 	userInfoState,
@@ -18,8 +19,8 @@ export default function Friends({
 		receivedPending: [],
 		receivedRejected: [],
 	});
-	const [targetUserName, setTargetUserName] = useState(''); // New state for the target username
-	const [sendingRequest, setSendingRequest] = useState(false); // New state for sending request
+	const [targetUserName, setTargetUserName] = useState('');
+	const [sendingRequest, setSendingRequest] = useState(false);
 
 	const fetchFriendships = async () => {
 		setLoading(true);
@@ -78,7 +79,6 @@ export default function Friends({
 		}
 	};
 
-	// Function to send a friend request to the target username
 	const sendFriendRequest = async () => {
 		if (!targetUserName) {
 			setErrorMessage('Please provide a username');
@@ -188,7 +188,7 @@ export default function Friends({
 
 	const renderFriendRequests = (requests, ...opts) => {
 		return requests.map((request) => (
-			<div key={request.id} className="friend-request">
+			<div key={request.id} className={styles.friendRequest}>
 				<div>
 					{/* If the current user is the receiver of the request, show sender's details */}
 					{request.receiverId === userInfo.id ? (
@@ -209,10 +209,14 @@ export default function Friends({
 								className="friend-request-img"
 							/>
 							<div className="friend-request-info">
-								<p>{request.sender.username}</p>
+								<p>@{request.sender.username}</p>
 							</div>
 							{opts.map((button, index) => (
-								<button key={index} onClick={() => button.onClick(request)}>
+								<button
+									className={styles.friendRequestBtn}
+									key={index}
+									onClick={() => button.onClick(request)}
+								>
 									{button.label}
 								</button>
 							))}
@@ -257,33 +261,24 @@ export default function Friends({
 			) : updating ? (
 				<h1>Updating friends list...</h1>
 			) : (
-				<div className="friendship-container">
-					{/* New section to send a friend request */}
-					<div className="send-friend-request">
-						<h3>Send Friend Request</h3>
-						<input
-							type="text"
-							placeholder="Enter username"
-							value={targetUserName}
-							onChange={(e) => setTargetUserName(e.target.value)}
-						/>
-						<button onClick={sendFriendRequest} disabled={sendingRequest}>
-							{sendingRequest ? 'Sending...' : 'Send Request'}
-						</button>
-					</div>
-
-					<div className="friendship-category">
+				<div className={styles.friendshipContainer}>
+					<div className={styles.friendshipCategory}>
 						<h3>Accepted Friend Requests</h3>
-						{renderFriendRequests(friendRequests.accepted, chatButton)}
+						<br />
+						<div className={styles.goddamnDiv}>
+							{renderFriendRequests(friendRequests.accepted, chatButton)}
+						</div>
 					</div>
 
-					<div className="friendship-category">
+					<div className={styles.friendshipCategory}>
 						<h3>Sent Pending Friend Requests</h3>
+						<br />
 						{renderFriendRequests(friendRequests.sentPending)}
 					</div>
 
-					<div className="friendship-category">
+					<div className={styles.friendshipCategory}>
 						<h3>Received Pending Friend Requests</h3>
+						<br />
 						{renderFriendRequests(
 							friendRequests.receivedPending,
 							acceptButton,
@@ -291,13 +286,42 @@ export default function Friends({
 						)}
 					</div>
 
-					<div className="friendship-category">
+					<div className={styles.friendshipCategory}>
 						<h3>Received Rejected Friend Requests</h3>
+						<br />
 						{renderFriendRequests(friendRequests.receivedRejected)}
 					</div>
 
-					<button onClick={() => navigate('/user')}>Return</button>
-					<button onClick={() => navigate('/logout')}>Logout</button>
+					<div className={styles.sendFriendRequest}>
+						<h3>Send Friend Request</h3>
+						<input
+							type="text"
+							placeholder="Enter username"
+							value={targetUserName}
+							onChange={(e) => setTargetUserName(e.target.value)}
+						/>
+						<button
+							className={styles.friendBtn}
+							onClick={sendFriendRequest}
+							disabled={sendingRequest}
+						>
+							{sendingRequest ? 'Sending...' : 'Send Request'}
+						</button>
+					</div>
+					<br />
+
+					<button
+						className={styles.friendBtn}
+						onClick={() => navigate('/user')}
+					>
+						Return
+					</button>
+					<button
+						className={styles.friendBtn}
+						onClick={() => navigate('/logout')}
+					>
+						Logout
+					</button>
 				</div>
 			)}
 		</>

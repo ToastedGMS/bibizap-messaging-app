@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Message from './Message';
+import styles from '../stylesheets/Chat.module.css';
 
 export default function Chat({
 	userInfoState,
@@ -63,12 +64,12 @@ export default function Chat({
 
 	return (
 		<>
-			<div className="messages">
+			<div className={styles.messages}>
 				{messages.map((message, index) => (
-					<Message key={index} message={message} />
+					<Message key={index} message={message} userInfo={userInfo} />
 				))}
 			</div>
-			<div className="input-box">
+			<div className={styles.inputBox}>
 				<input
 					type="text"
 					value={messageText}
@@ -77,6 +78,14 @@ export default function Chat({
 				/>
 				<button
 					className="sendBtn"
+					style={{
+						padding: '10px 20px',
+						backgroundColor: '#007bff',
+						color: '#fff',
+						border: 'none',
+						borderRadius: '4px',
+						cursor: 'pointer',
+					}}
 					onClick={(e) => {
 						e.preventDefault();
 						if (messageText.trim() && roomName) {
@@ -87,7 +96,6 @@ export default function Chat({
 								chatId: roomName,
 							});
 							setMessageText('');
-							console.log('messages', messages);
 						}
 					}}
 				>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import styles from '../stylesheets/UpdateUser.module.css';
 
 export default function UpdateUser({
 	userInfoState,
@@ -75,56 +76,66 @@ export default function UpdateUser({
 			{loading === true ? (
 				<h1>Loading...</h1>
 			) : (
-				<>
-					<form onSubmit={updateUserInfo}>
-						<div>
-							<label>Username</label> <br />
+				<div className={styles.container}>
+					<div className={styles.FormContainer}>
+						<form onSubmit={updateUserInfo}>
+							<div className={styles.formDiv}>
+								<label>Username</label> <br />
+								<input
+									type="text"
+									value={username}
+									onChange={(e) => setUsername(e.target.value)}
+									placeholder="Username"
+									pattern="^[A-Za-z0-9]+$"
+									required
+									title="Username can only contain letters and numbers (no spaces or special characters)"
+								/>
+							</div>
+							<div className={styles.formDiv}>
+								<label>Bio</label> <br />
+								<textarea
+									value={bio}
+									onChange={(e) => setBio(e.target.value)}
+									maxLength={140}
+									placeholder="Bio"
+								/>
+							</div>
+							<div className={styles.formDiv}>
+								<label>Profile Picture URL</label> <br />
+								<input
+									type="text"
+									value={dp}
+									onChange={(e) => setDp(e.target.value)}
+									placeholder="Profile Picture URL"
+								/>
+							</div>
+							<div className={styles.formDiv}>
+								<label>Email</label> <br />
+								<input
+									type="email"
+									value={email}
+									onChange={(e) => setEmail(e.target.value)}
+									pattern="^[a-zA-Z0-9._%+-]+@require\.com$"
+									placeholder="Email"
+									required
+									title="Please inform a valid email"
+								/>
+							</div>
 							<br />
-							<input
-								type="text"
-								value={username}
-								onChange={(e) => setUsername(e.target.value)}
-								placeholder="Username"
-								required
-							/>
-						</div>
-						<div>
-							<label>Bio</label> <br />
-							<br />
-							<textarea
-								value={bio}
-								onChange={(e) => setBio(e.target.value)}
-								placeholder="Bio"
-							/>
-						</div>
-						<div>
-							<label>Profile Picture URL</label> <br />
-							<br />
-							<input
-								type="text"
-								value={dp}
-								onChange={(e) => setDp(e.target.value)}
-								placeholder="Profile Picture URL"
-							/>
-						</div>
-						<div>
-							<label>Email</label> <br />
-							<br />
-							<input
-								type="email"
-								value={email}
-								onChange={(e) => setEmail(e.target.value)}
-								placeholder="Email"
-								required
-							/>
-						</div>
-
-						<div>
-							<button type="submit">Update Profile</button>
-						</div>
-					</form>
-					<button onClick={() => navigate('/user')}>Return</button>{' '}
-				</>
+							<div>
+								<button className={styles.profileBtn} type="submit">
+									Update Profile
+								</button>
+							</div>
+						</form>
+						<button
+							className={styles.profileBtn}
+							onClick={() => navigate('/user')}
+						>
+							Return
+						</button>{' '}
+					</div>
+				</div>
 			)}
 		</>
 	);

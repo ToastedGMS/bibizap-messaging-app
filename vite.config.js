@@ -8,4 +8,5 @@ export default defineConfig({
 		host: '0.0.0.0', // Allow access from network devices
 	},
 	plugins: [react()],
+	css: { modules: { scopeBehaviour: 'local' } },
 });

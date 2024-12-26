@@ -1,23 +1,21 @@
 import React from 'react';
+import { format } from 'date-fns';
+import styles from '../stylesheets/Message.module.css';
 
-const Message = ({ message }) => {
+const Message = ({ message, userInfo }) => {
 	const { textContent, authorId, recipientId, chatId, createdAt, authorName } =
 		message;
 
 	return (
 		<div
-			className="message"
-			style={{
-				border: '1px solid black',
-				borderRadius: '15px',
-				maxWidth: 'fit-content',
-				paddingLeft: '2em',
-				paddingRight: '2em',
-			}}
+			className={`${
+				authorId === userInfo.id ? styles.myMessage : styles.notMyMessage
+			} ${styles.message}`}
 		>
-			<h4>{authorName}</h4>
 			<p>{textContent}</p>
-			<p>{createdAt}</p>
+			<p className={styles.timestamp}>
+				{format(createdAt, 'HH:mm:ss dd/MM/yyyy')}
+			</p>
 		</div>
 	);
 };

@@ -1,0 +1,35 @@
+/* Message.module.css */
+.message {
+	padding: 10px;
+	border-radius: 4px;
+	margin-bottom: 10px;
+	max-width: 70%;
+	word-wrap: break-word;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.myMessage {
+	background-color: #d1e7dd;
+	align-self: flex-end;
+}
+
+.notMyMessage {
+	background-color: #f8d7da;
+	align-self: flex-start;
+}
+
+.message h4 {
+	margin: 0 0 5px 0;
+	font-size: 1rem;
+	font-weight: bold;
+}
+
+.message p {
+	margin: 0;
+}
+
+.timestamp {
+	font-size: 0.8rem;
+	color: #888;
+	margin-top: 5px;
+}
