@@ -14,11 +14,20 @@ export default function UserProfile({ userInfoState, setErrorMessage }) {
 			return;
 		}
 		async function setInfo() {
-			setUserInfo(await fetchUserInfo(userInfo.id));
+			try {
+				setUserInfo(await fetchUserInfo(userInfo.id));
+			} catch (error) {
+				setErrorMessage(error.message);
+				console.error(error);
+			}
 		}
 
 		setInfo();
-	}, [userInfo, setErrorMessage]);
+	}, [setUserInfo]);
 
-	return <UserCard userInfo={userInfo} />;
+	return userInfo && userInfo.dp ? (
+		<UserCard userInfo={userInfo} />
+	) : (
+		<h1>Loading...</h1>
+	);
 }
