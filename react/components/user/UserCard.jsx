@@ -1,6 +1,8 @@
+import { useNavigate } from 'react-router-dom';
 import styles from '../../stylesheets/UserProfile.module.css';
 
-export default function UserCard(userInfo) {
+export default function UserCard({ userInfo }) {
+	const navigate = useNavigate();
 	return (
 		<div className={styles.container}>
 			{userInfo === null ? null : (
@@ -10,7 +12,7 @@ export default function UserCard(userInfo) {
 					<p>{userInfo.bio}</p>
 					<button
 						className={styles.profileBtn}
-						// onClick={() => navigate('/user/friendships')}
+						onClick={() => navigate('/user/friendships')}
 					>
 						Friendships
 					</button>
@@ -18,7 +20,7 @@ export default function UserCard(userInfo) {
 					<br />
 					<button
 						className={styles.profileBtn}
-						// onClick={() => navigate('/user/update')}
+						onClick={() => navigate('/user/update')}
 					>
 						Edit Profile
 					</button>
@@ -26,7 +28,7 @@ export default function UserCard(userInfo) {
 					<br />
 					<button
 						className={styles.profileBtn}
-						// onClick={() => navigate('/logout')}
+						onClick={() => navigate('/logout')}
 					>
 						Logout
 					</button>
