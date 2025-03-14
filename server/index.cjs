@@ -25,6 +25,8 @@ const userAuthRouter = require('./routes/userAuth.cjs');
 app.use('/api/users', userAuthRouter);
 const friendshipRouter = require('./routes/friendRouter.cjs');
 app.use('/api/friends', friendshipRouter);
+const uploadRouter = require('./routes/uploadRoute.cjs');
+app.use('/api/upload', uploadRouter);
 
 io.on('connection', (socket) => {
 	console.log(`${socket.id} user just connected!`);

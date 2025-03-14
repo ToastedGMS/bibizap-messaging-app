@@ -19,6 +19,12 @@ export default function UpdateUser() {
 	const navigate = useNavigate();
 	const [loading, setLoading] = useState(false);
 
+	const [file, setFile] = useState(null);
+
+	const handleFileChange = (e) => {
+		setFile(e.target.files[0]);
+	};
+
 	useEffect(() => {
 		if (userInfo === null || userInfo === undefined) {
 			setErrorMessage('Please login.');
@@ -32,8 +38,41 @@ export default function UpdateUser() {
 			setUsername(userInfo.username);
 			setBio(userInfo.bio);
 			setEmail(userInfo.email);
+			setDp(userInfo.dp);
 		}
 	}, [userInfo]);
+
+	const handleUpload = async () => {
+		if (!file) return;
+
+		const formData = new FormData();
+		formData.append('file', file);
+
+		try {
+			const response = await fetch(`${serverUrl}/api/upload`, {
+				method: 'POST',
+				body: formData,
+			});
+
+			if (!response.ok) {
+				const errorText = await response.text();
+				setErrorMessage(`Error uploading file: ${errorText}`);
+				return;
+			}
+
+			const result = await response.json();
+			setDp(result.fileUrl); // Automatically set the profile picture URL after upload
+		} catch (error) {
+			console.error('Error uploading file:', error);
+			setErrorMessage('Failed to upload file.');
+		}
+	};
+
+	useEffect(() => {
+		if (file) {
+			handleUpload();
+		}
+	}, [file]);
 
 	const updateUserInfo = async (e) => {
 		e.preventDefault();
@@ -42,7 +81,7 @@ export default function UpdateUser() {
 		const updatedUserInfo = {
 			username: username.trim(),
 			bio: bio.trim(),
-			dp,
+			dp: dp.trim(),
 			email: email.trim(),
 		};
 
@@ -57,11 +96,7 @@ export default function UpdateUser() {
 			});
 
 			if (!response.ok) {
-				const errorData = await response.json();
-				console.error('Failed to update user info', errorData);
-				setErrorMessage('Failed to update user info', errorData);
-				navigate('/login');
-
+				setErrorMessage('Failed to update user info');
 				return;
 			}
 
@@ -70,6 +105,7 @@ export default function UpdateUser() {
 			navigate('/user');
 		} catch (error) {
 			console.error('Error updating user data:', error);
+			setErrorMessage('An error occurred while updating your profile.');
 		} finally {
 			setLoading(false);
 		}
@@ -77,14 +113,14 @@ export default function UpdateUser() {
 
 	return (
 		<>
-			{loading === true ? (
+			{loading ? (
 				<h1>Loading...</h1>
 			) : (
 				<div className={styles.container}>
 					<div className={styles.FormContainer}>
 						<form onSubmit={updateUserInfo}>
 							<div className={styles.formDiv}>
-								<label>Username</label> <br />
+								<label>Username</label>
 								<input
 									type="text"
 									value={username}
@@ -94,30 +130,37 @@ export default function UpdateUser() {
 									required
 									minLength={4}
 									maxLength={16}
-									title="Username can only contain letters and numbers (no spaces or special characters)"
 								/>
 							</div>
+							<br />
 							<div className={styles.formDiv}>
-								<label>Bio</label> <br />
+								<label>Profile Picture</label>
+								<input
+									type="file"
+									accept="image/jpg, image/png, image/webp, image/jpeg"
+									onChange={handleFileChange}
+								/>
+								{dp && (
+									<img
+										src={dp}
+										alt="Profile preview"
+										className={styles.preview}
+									/>
+								)}
+							</div>
+							<br />
+							<div className={styles.formDiv}>
+								<label>Bio</label>
 								<textarea
 									value={bio}
 									onChange={(e) => setBio(e.target.value)}
 									maxLength={140}
 									placeholder="Bio"
-									style={{ resize: 'none' }}
 								/>
-							</div>
+							</div>{' '}
+							<br />
 							<div className={styles.formDiv}>
-								<label>Profile Picture URL</label> <br />
-								<input
-									type="text"
-									value={dp}
-									onChange={(e) => setDp(e.target.value)}
-									placeholder="Profile Picture URL"
-								/>
-							</div>
-							<div className={styles.formDiv}>
-								<label>Email</label> <br />
+								<label>Email</label>
 								<input
 									type="email"
 									value={email}
@@ -129,18 +172,16 @@ export default function UpdateUser() {
 								/>
 							</div>
 							<br />
-							<div>
-								<button className={styles.profileBtn} type="submit">
-									Update Profile
-								</button>
-							</div>
+							<button className={styles.profileBtn} type="submit">
+								Update Profile
+							</button>
 						</form>
 						<button
 							className={styles.profileBtn}
 							onClick={() => navigate('/user')}
 						>
 							Return
-						</button>{' '}
+						</button>
 					</div>
 				</div>
 			)}

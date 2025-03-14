@@ -22,6 +22,12 @@
 	min-width: 100%;
 }
 
+.formDiv {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
 .formDiv > input,
 .formDiv > textarea {
 	border-radius: 15px;
@@ -37,4 +43,11 @@
 button:hover {
 	cursor: pointer;
 	background-color: rgba(245, 130, 130, 0.363);
+}
+
+.preview {
+	width: 12em;
+	height: 12em;
+	border-radius: 50%;
+	object-fit: cover;
 }
