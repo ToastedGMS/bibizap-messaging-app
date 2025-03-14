@@ -1,15 +1,16 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import styles from '../stylesheets/Login.module.css';
-import UserContext from '../context/UserContext';
-import TokenContext from '../context/TokenContext';
-import ErrorContext from '../context/ErrorContext';
-import SocketContext from '../context/SocketContext';
+import styles from '../../stylesheets/Login.module.css';
+import UserContext from '../../context/UserContext';
+import TokenContext from '../../context/TokenContext';
+import ErrorContext from '../../context/ErrorContext';
+import SocketContext from '../../context/SocketContext';
+const serverUrl = import.meta.env.VITE_SERVER_URL;
 
 export default function Login({ socket }) {
 	const { accessToken, setAccessToken } = useContext(TokenContext);
 	const { errorMessage, setErrorMessage } = useContext(ErrorContext);
-	const { socketID, setSocketID } = useContext(SocketContext);
+	const { setSocketID } = useContext(SocketContext);
 	const { setUserInfo } = useContext(UserContext);
 
 	const [identification, setIdentification] = useState('');
@@ -36,16 +37,18 @@ export default function Login({ socket }) {
 		setLoading(true);
 		setErrorMessage(null);
 
+		const trimmedValues = {
+			identification: identification.trim(),
+			password: password.trim(),
+		};
+
 		try {
-			const response = await fetch('http://192.168.1.28:4000/api/users/login', {
+			const response = await fetch(`${serverUrl}/api/users/login`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'Application/JSON',
 				},
-				body: JSON.stringify({
-					identification,
-					password,
-				}),
+				body: JSON.stringify(trimmedValues),
 			});
 
 			if (!response.ok) {

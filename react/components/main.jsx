@@ -1,7 +1,7 @@
 import { StrictMode, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Login from './Login.jsx';
+import Login from './login/Login.jsx';
 import Logout from './Logout.jsx';
 import UserProfile from './user/UserProfile.jsx';
 import UpdateUser from './UpdateUser.jsx';
@@ -15,7 +15,8 @@ import UserContext from '../context/UserContext.jsx';
 import TokenContext from '../context/TokenContext.jsx';
 import SocketContext from '../context/SocketContext.jsx';
 import ErrorContext from '../context/ErrorContext.jsx';
-const socket = io('http://192.168.1.28:4000');
+const serverUrl = import.meta.env.VITE_SERVER_URL;
+const socket = io(`${serverUrl}`);
 
 const Root = () => {
 	const [accessToken, setAccessToken] = useState(null);
