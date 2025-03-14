@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import styles from '../stylesheets/UpdateUser.module.css';
-import UserContext from '../context/UserContext';
-import TokenContext from '../context/TokenContext';
-import ErrorContext from '../context/ErrorContext';
+import styles from '../../stylesheets/UpdateUser.module.css';
+import UserContext from '../../context/UserContext';
+import TokenContext from '../../context/TokenContext';
+import ErrorContext from '../../context/ErrorContext';
+const serverUrl = import.meta.env.VITE_SERVER_URL;
 
 export default function UpdateUser() {
 	const { userInfo, setUserInfo } = useContext(UserContext);
@@ -19,14 +20,18 @@ export default function UpdateUser() {
 	const [loading, setLoading] = useState(false);
 
 	useEffect(() => {
+		if (userInfo === null || userInfo === undefined) {
+			setErrorMessage('Please login.');
+			navigate('/login');
+			return;
+		}
+	}, [userInfo]);
+
+	useEffect(() => {
 		if (userInfo) {
 			setUsername(userInfo.username);
 			setBio(userInfo.bio);
 			setEmail(userInfo.email);
-		} else {
-			setErrorMessage('Please login.');
-			navigate('/login');
-			return;
 		}
 	}, [userInfo]);
 
@@ -35,24 +40,21 @@ export default function UpdateUser() {
 		setLoading(true);
 
 		const updatedUserInfo = {
-			username,
-			bio,
+			username: username.trim(),
+			bio: bio.trim(),
 			dp,
-			email,
+			email: email.trim(),
 		};
 
 		try {
-			const response = await fetch(
-				`http://192.168.1.28:4000/api/users/${userInfo.id}`,
-				{
-					method: 'PUT',
-					headers: {
-						'Content-Type': 'application/json',
-						Authorization: `Bearer ${accessToken}`,
-					},
-					body: JSON.stringify(updatedUserInfo),
-				}
-			);
+			const response = await fetch(`${serverUrl}/api/users/${userInfo.id}`, {
+				method: 'PUT',
+				headers: {
+					'Content-Type': 'application/json',
+					Authorization: `Bearer ${accessToken}`,
+				},
+				body: JSON.stringify(updatedUserInfo),
+			});
 
 			if (!response.ok) {
 				const errorData = await response.json();
@@ -90,6 +92,8 @@ export default function UpdateUser() {
 									placeholder="Username"
 									pattern="^[A-Za-z0-9]+$"
 									required
+									minLength={4}
+									maxLength={16}
 									title="Username can only contain letters and numbers (no spaces or special characters)"
 								/>
 							</div>
@@ -100,6 +104,7 @@ export default function UpdateUser() {
 									onChange={(e) => setBio(e.target.value)}
 									maxLength={140}
 									placeholder="Bio"
+									style={{ resize: 'none' }}
 								/>
 							</div>
 							<div className={styles.formDiv}>

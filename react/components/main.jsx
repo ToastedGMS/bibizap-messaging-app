@@ -4,7 +4,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Login from './login/Login.jsx';
 import Logout from './Logout.jsx';
 import UserProfile from './user/UserProfile.jsx';
-import UpdateUser from './UpdateUser.jsx';
+import UpdateUser from './user/UpdateUser.jsx';
 import Friends from './Friends.jsx';
 import ChatCollection from './ChatCollection.jsx';
 import Chat from './Chat.jsx';

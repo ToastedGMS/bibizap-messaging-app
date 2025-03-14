@@ -69,6 +69,7 @@ export default function Signup() {
 									type="email"
 									name="email"
 									id="email"
+									pattern="^[a-zA-Z0-9._%+-]+@require\.com$"
 									required
 									placeholder="Enter your email"
 									value={email}

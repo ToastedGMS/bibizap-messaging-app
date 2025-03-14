@@ -26,7 +26,7 @@ export default function UserProfile() {
 		}
 
 		setInfo();
-	}, [setUserInfo]);
+	}, [setUserInfo, userInfo]);
 
 	return userInfo && userInfo.dp ? (
 		<UserCard userInfo={userInfo} />
