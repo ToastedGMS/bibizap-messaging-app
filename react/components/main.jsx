@@ -36,67 +36,22 @@ const Root = () => {
 									<Route path="/signup" element={<Signup />} />
 
 									<Route path="/login" element={<Login socket={socket} />} />
-									<Route
-										path="/logout"
-										element={<Logout setAccessToken={setAccessToken} />}
-									/>
+									<Route path="/logout" element={<Logout />} />
 
-									<Route
-										path="/user"
-										element={
-											<UserProfile
-												userInfoState={{ userInfo, setUserInfo }}
-												setErrorMessage={setErrorMessage}
-											/>
-										}
-									/>
+									<Route path="/user" element={<UserProfile />} />
 
-									<Route
-										path="/user/update"
-										element={
-											<UpdateUser
-												userInfoState={{ userInfo, setUserInfo }}
-												setErrorMessage={setErrorMessage}
-												accessToken={accessToken}
-											/>
-										}
-									/>
+									<Route path="/user/update" element={<UpdateUser />} />
 
 									<Route
 										path="/user/friendships"
-										element={
-											<Friends
-												userInfoState={{ userInfo, setUserInfo }}
-												setErrorMessage={setErrorMessage}
-												accessToken={accessToken}
-												socketID={socketID}
-												socket={socket}
-											/>
-										}
+										element={<Friends socket={socket} />}
 									/>
 
-									<Route
-										path="/chats"
-										element={
-											<ChatCollection
-												accessToken={accessToken}
-												userInfoState={{ userInfo, setUserInfo }}
-												setErrorMessage={setErrorMessage}
-											/>
-										}
-									/>
+									<Route path="/chats" element={<ChatCollection />} />
 
 									<Route
 										path="/chats/chat"
-										element={
-											<Chat
-												accessToken={accessToken}
-												userInfoState={{ userInfo, setUserInfo }}
-												setErrorMessage={setErrorMessage}
-												socket={socket}
-												socketID={socketID}
-											/>
-										}
+										element={<Chat socket={socket} />}
 									/>
 								</Routes>
 							</BrowserRouter>

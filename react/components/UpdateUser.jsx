@@ -1,17 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from '../stylesheets/UpdateUser.module.css';
+import UserContext from '../context/UserContext';
+import TokenContext from '../context/TokenContext';
+import ErrorContext from '../context/ErrorContext';
 
-export default function UpdateUser({
-	userInfoState,
-	setErrorMessage,
-	accessToken,
-}) {
-	const { userInfo, setUserInfo } = userInfoState;
+export default function UpdateUser() {
+	const { userInfo, setUserInfo } = useContext(UserContext);
+	const { accessToken } = useContext(TokenContext);
+	const { setErrorMessage } = useContext(ErrorContext);
+
 	const [username, setUsername] = useState('');
 	const [bio, setBio] = useState('');
 	const [dp, setDp] = useState('');
 	const [email, setEmail] = useState('');
+
 	const navigate = useNavigate();
 	const [loading, setLoading] = useState(false);
 
