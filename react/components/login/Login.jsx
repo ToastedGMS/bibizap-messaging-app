@@ -5,6 +5,7 @@ import UserContext from '../../context/UserContext';
 import TokenContext from '../../context/TokenContext';
 import ErrorContext from '../../context/ErrorContext';
 import SocketContext from '../../context/SocketContext';
+import { fetchUserInfo } from '../user/FetchUserInfo.cjs';
 const serverUrl = import.meta.env.VITE_SERVER_URL;
 
 export default function Login({ socket }) {
@@ -59,7 +60,7 @@ export default function Login({ socket }) {
 
 			const data = await response.json();
 			setAccessToken(data.info.token);
-			setUserInfo(data.info.user);
+			setUserInfo(await fetchUserInfo(data.info.user.id));
 			navigate('/');
 
 			setIdentification('');

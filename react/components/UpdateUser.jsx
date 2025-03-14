@@ -65,7 +65,6 @@ export default function UpdateUser() {
 
 			const data = await response.json();
 			setUserInfo(data.updatedUser);
-			console.log('user', data);
 			navigate('/user');
 		} catch (error) {
 			console.error('Error updating user data:', error);

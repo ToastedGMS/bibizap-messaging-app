@@ -39,8 +39,6 @@ export default function Signup() {
 			}
 
 			const data = await response.json();
-			console.log('User created:', data.user);
-
 			navigate('/login');
 
 			setEmail('');
