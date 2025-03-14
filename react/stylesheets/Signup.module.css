@@ -18,7 +18,7 @@
 	align-items: center;
 }
 
-h1 {
+.signupH1 {
 	width: 10px;
 	animation-name: spin, depth;
 	animation-timing-function: linear;

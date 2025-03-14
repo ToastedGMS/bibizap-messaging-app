@@ -22,7 +22,7 @@ body {
 	text-align: center;
 }
 
-h1 {
+.loginH1 {
 	width: 10px;
 	animation-name: spin, depth;
 	animation-timing-function: linear;

@@ -75,10 +75,10 @@ export default function Login({ socket }) {
 	return (
 		<>
 			{loading ? (
-				<h1>Loading...</h1>
+				<h1 className={styles.loginH1}>Loading...</h1>
 			) : (
 				<div className={styles.container}>
-					<h1>We're glad you returned! :)</h1>
+					<h1 className={styles.loginH1}>We're glad you returned! :)</h1>
 					<div className={styles.FormContainer}>
 						<form onSubmit={handleSubmit}>
 							<div className={styles.formDiv}>

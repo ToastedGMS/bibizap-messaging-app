@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import styles from '../stylesheets/Signup.module.css';
+import styles from '../../stylesheets/Signup.module.css';
+const serverUrl = import.meta.env.VITE_SERVER_URL;
 
 export default function Signup() {
 	const [email, setEmail] = useState('');
@@ -16,17 +17,19 @@ export default function Signup() {
 		setLoading(true);
 		setErrorMessage(null);
 
+		const trimmedValues = {
+			email: email.trim(),
+			password: password.trim(),
+			username: username.trim(),
+		};
+
 		try {
-			const response = await fetch('http://192.168.1.28:4000/api/users/new', {
+			const response = await fetch(`${serverUrl}/api/users/new`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'Application/JSON',
 				},
-				body: JSON.stringify({
-					email,
-					password,
-					username,
-				}),
+				body: JSON.stringify(trimmedValues),
 			});
 
 			if (!response.ok) {
@@ -54,10 +57,10 @@ export default function Signup() {
 	return (
 		<>
 			{loading ? (
-				<h1>Loading...</h1>
+				<h1 className={styles.signupH1}>Loading...</h1>
 			) : (
 				<div className={styles.container}>
-					<h1>Signup</h1>
+					<h1 className={styles.signupH1}>Signup</h1>
 					<div className={styles.FormContainer}>
 						<form onSubmit={handleSubmit}>
 							<div className={styles.formDiv}>
@@ -84,6 +87,7 @@ export default function Signup() {
 									required
 									placeholder="Enter your password"
 									value={password}
+									minLength={8}
 								/>
 							</div>
 							<div className={styles.formDiv}>
@@ -97,6 +101,8 @@ export default function Signup() {
 									required
 									placeholder="Enter your username"
 									value={username}
+									minLength={4}
+									maxLength={16}
 								/>
 							</div>
 							<p style={{ color: 'red' }}>{errorMessage}</p>
