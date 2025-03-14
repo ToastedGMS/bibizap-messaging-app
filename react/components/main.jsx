@@ -1,8 +1,8 @@
 import { StrictMode, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Login from './login/Login.jsx';
-import Logout from './Logout.jsx';
+import Login from './auth/Login.jsx';
+import Logout from './auth/Logout.jsx';
 import UserProfile from './user/UserProfile.jsx';
 import UpdateUser from './user/UpdateUser.jsx';
 import Friends from './Friends.jsx';
