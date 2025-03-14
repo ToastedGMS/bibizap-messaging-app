@@ -1,20 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from '../stylesheets/Login.module.css';
+import UserContext from '../context/UserContext';
+import TokenContext from '../context/TokenContext';
+import ErrorContext from '../context/ErrorContext';
+import SocketContext from '../context/SocketContext';
 
-export default function Login({
-	tokenState,
-	setUserInfo,
-	errorState,
-	socketIdState,
-	socket,
-}) {
+export default function Login({ socket }) {
+	const { accessToken, setAccessToken } = useContext(TokenContext);
+	const { errorMessage, setErrorMessage } = useContext(ErrorContext);
+	const { socketID, setSocketID } = useContext(SocketContext);
+	const { setUserInfo } = useContext(UserContext);
+
 	const [identification, setIdentification] = useState('');
 	const [password, setPassword] = useState('');
 	const [loading, setLoading] = useState(false);
-	const { errorMessage, setErrorMessage } = errorState;
-	const { accessToken, setAccessToken } = tokenState;
-	const { socketID, setSocketID } = socketIdState;
 
 	const navigate = useNavigate();
 
@@ -57,7 +57,7 @@ export default function Login({
 			const data = await response.json();
 			setAccessToken(data.info.token);
 			setUserInfo(data.info.user);
-			navigate('/user');
+			navigate('/');
 
 			setIdentification('');
 			setPassword('');
