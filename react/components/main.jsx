@@ -9,7 +9,7 @@ import Friends from './Friends.jsx';
 import ChatCollection from './ChatCollection.jsx';
 import Chat from './Chat.jsx';
 import { io } from 'socket.io-client';
-import Signup from './Signup.jsx';
+import Signup from './signup/Signup.jsx';
 import Home from './Home.jsx';
 import UserContext from '../context/UserContext.jsx';
 import TokenContext from '../context/TokenContext.jsx';
