@@ -17,7 +17,7 @@ async function dbCreateUser({ userInfo }) {
 				password: hashedPassword,
 				username,
 				bio: bio || null,
-				dp: dp || null,
+				dp: dp || '/default-avatar.png',
 			},
 		});
 
