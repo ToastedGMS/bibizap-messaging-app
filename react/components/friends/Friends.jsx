@@ -5,6 +5,8 @@ import UserContext from '../../context/UserContext';
 import ErrorContext from '../../context/ErrorContext';
 import TokenContext from '../../context/TokenContext';
 import sendFriendRequest from './SendFriendRequest';
+import AcceptButton from './AcceptButton';
+import ChatButton from './ChatButton';
 const serverUrl = import.meta.env.VITE_SERVER_URL;
 
 export default function Friends({ socket }) {
@@ -24,14 +26,6 @@ export default function Friends({ socket }) {
 	const [sendingRequest, setSendingRequest] = useState(false);
 
 	const navigate = useNavigate();
-
-	useEffect(() => {
-		if (userInfo === null || userInfo === undefined) {
-			setErrorMessage('Please login.');
-			navigate('/login');
-			return;
-		}
-	}, [userInfo]);
 
 	const fetchFriendships = async () => {
 		setLoading(true);
@@ -86,6 +80,16 @@ export default function Friends({ socket }) {
 		}
 	};
 
+	useEffect(() => {
+		if (userInfo === null || userInfo === undefined) {
+			setErrorMessage('Please login.');
+			navigate('/login');
+			return;
+		} else {
+			fetchFriendships();
+		}
+	}, [userInfo]);
+
 	const handleSendRequest = async () => {
 		await sendFriendRequest({
 			serverUrl,
@@ -98,75 +102,11 @@ export default function Friends({ socket }) {
 		});
 	};
 
-	async function handleClick(title, request) {
-		setUpdating(true);
-		try {
-			const response = await fetch(`${serverUrl}/api/friends/${title}`, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-					authorization: `Bearer ${accessToken}`,
-				},
-				body: JSON.stringify({ senderId: request.senderId }),
-			});
-
-			if (!response.ok) {
-				throw new Error('Failed to accept the request');
-			}
-
-			const data = await response.json();
-
-			fetchFriendships();
-		} catch (error) {
-			console.error('Error accepting the request:', error);
-		}
-	}
-
-	const acceptButton = {
-		title: 'accept',
-		label: 'Accept',
-		onClick: (request) => handleClick('accept', request),
-	};
-
-	const rejectButton = {
-		title: 'reject',
-		label: 'Reject',
-		onClick: (request) => handleClick('reject', request),
-	};
-
-	const chatButton = {
-		label: 'Chat',
-		onClick: (request) => {
-			const roomName = `${request.senderId}_${request.receiverId}`;
-			socket.emit('checkRoom', roomName, (exists) => {
-				if (exists) {
-					socket.emit('joinRoom', roomName);
-					console.log('Joining existing room:', roomName);
-				} else {
-					socket.emit('createRoom', roomName);
-					console.log('Creating a new room:', roomName);
-				}
-			});
-			navigate('/chats/chat', { state: { roomName } });
-		},
-	};
-
-	useEffect(() => {
-		if (userInfo === null) {
-			console.log('userInfo', userInfo);
-			setErrorMessage('Please login.');
-			navigate('/login');
-		} else {
-			fetchFriendships();
-		}
-	}, [userInfo, navigate, accessToken, setErrorMessage]);
-
-	const renderFriendRequests = (requests, ...opts) => {
+	const renderFriendRequests = (requests, status) => {
 		return requests.map((request) => (
 			<div key={request.id} className={styles.friendRequest}>
 				<div>
 					{request.receiverId === userInfo.id ? (
-						// Se o usuário atual é o RECEIVER (quem recebeu o pedido):
 						<div>
 							<img
 								style={{
@@ -186,32 +126,18 @@ export default function Friends({ socket }) {
 							<div className="friend-request-info">
 								<p>@{request.sender.username}</p>
 							</div>
-
-							{/* Renderiza o botão de aceitar só se o pedido estiver PENDENTE */}
-							{request.status === 'pending' && (
-								<button
-									className={styles.friendRequestBtn}
-									onClick={() => acceptButton.onClick(request)}
-								>
-									{acceptButton.label}
-								</button>
-							)}
-
-							{/* Renderiza os outros botões normalmente */}
-							{opts.map((button, index) =>
-								button !== acceptButton ? (
-									<button
-										key={index}
-										className={styles.friendRequestBtn}
-										onClick={() => button.onClick(request)}
-									>
-										{button.label}
-									</button>
-								) : null
-							)}
+							{status === 'pending' ? (
+								<AcceptButton
+									request={request}
+									serverUrl={serverUrl}
+									accessToken={accessToken}
+									fetchFriendships={fetchFriendships}
+								/>
+							) : status === 'accepted' ? (
+								<ChatButton socket={socket} request={request} />
+							) : null}
 						</div>
 					) : (
-						// Se o usuário atual é o SENDER (quem enviou o pedido):
 						<div>
 							<img
 								style={{
@@ -231,19 +157,16 @@ export default function Friends({ socket }) {
 							<div className="friend-request-info">
 								<p>{request.receiver.username}</p>
 							</div>
-
-							{/* Renderiza os botões exceto "Aceitar" */}
-							{opts
-								.filter((button) => button !== acceptButton)
-								.map((button, index) => (
-									<button
-										key={index}
-										className={styles.friendRequestBtn}
-										onClick={() => button.onClick(request)}
-									>
-										{button.label}
-									</button>
-								))}
+							{status === 'pending' ? (
+								<AcceptButton
+									request={request}
+									serverUrl={serverUrl}
+									accessToken={accessToken}
+									fetchFriendships={fetchFriendships}
+								/>
+							) : status === 'accepted' ? (
+								<ChatButton socket={socket} request={request} />
+							) : null}
 						</div>
 					)}
 				</div>
@@ -263,14 +186,14 @@ export default function Friends({ socket }) {
 						<h3>Accepted Friend Requests</h3>
 						<br />
 						<div className={styles.goddamnDiv}>
-							{renderFriendRequests(friendRequests.accepted, chatButton)}
+							{renderFriendRequests(friendRequests.accepted, 'accepted')}
 						</div>
 					</div>
 
 					<div className={styles.friendshipCategory}>
 						<h3> Pending Friend Requests</h3>
 						<br />
-						{renderFriendRequests(friendRequests.pending, acceptButton)}
+						{renderFriendRequests(friendRequests.pending, 'pending')}
 					</div>
 
 					<div className={styles.friendshipCategory}>
