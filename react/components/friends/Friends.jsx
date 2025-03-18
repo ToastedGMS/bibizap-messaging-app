@@ -7,6 +7,8 @@ import TokenContext from '../../context/TokenContext';
 import sendFriendRequest from './SendFriendRequest';
 import AcceptButton from './AcceptButton';
 import ChatButton from './ChatButton';
+import LogoutButton from '../shared/LogoutButton';
+import HomeButton from '../shared/HomeButton';
 const serverUrl = import.meta.env.VITE_SERVER_URL;
 
 export default function Friends({ socket }) {
@@ -220,18 +222,8 @@ export default function Friends({ socket }) {
 					</div>
 					<br />
 
-					<button
-						className={styles.friendBtn}
-						onClick={() => navigate('/user')}
-					>
-						Return
-					</button>
-					<button
-						className={styles.friendBtn}
-						onClick={() => navigate('/logout')}
-					>
-						Logout
-					</button>
+					<HomeButton />
+					<LogoutButton />
 				</div>
 			)}
 		</>
