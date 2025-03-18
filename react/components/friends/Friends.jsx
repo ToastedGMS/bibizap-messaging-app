@@ -1,16 +1,24 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import styles from '../stylesheets/Friends.module.css';
+import styles from '../../stylesheets/Friends.module.css';
+import UserContext from '../../context/UserContext';
+import ErrorContext from '../../context/ErrorContext';
+import TokenContext from '../../context/TokenContext';
+const serverUrl = import.meta.env.VITE_SERVER_URL;
 
-export default function Friends({
-	userInfoState,
-	setErrorMessage,
-	accessToken,
-	socketID,
-	socket,
-}) {
-	const navigate = useNavigate();
-	const { userInfo } = userInfoState;
+export default function Friends({ socket }) {
+	const { userInfo } = useContext(UserContext);
+	const { setErrorMessage } = useContext(ErrorContext);
+	const { accessToken } = useContext(TokenContext);
+
+	useEffect(() => {
+		if (userInfo === null || userInfo === undefined) {
+			setErrorMessage('Please login.');
+			navigate('/login');
+			return;
+		}
+	}, [userInfo]);
+
 	const [loading, setLoading] = useState(false);
 	const [updating, setUpdating] = useState(false);
 	const [friendRequests, setFriendRequests] = useState({
@@ -19,21 +27,29 @@ export default function Friends({
 		receivedPending: [],
 		receivedRejected: [],
 	});
+
 	const [targetUserName, setTargetUserName] = useState('');
 	const [sendingRequest, setSendingRequest] = useState(false);
+
+	const navigate = useNavigate();
+
+	useEffect(() => {
+		if (userInfo === null || userInfo === undefined) {
+			setErrorMessage('Please login.');
+			navigate('/login');
+			return;
+		}
+	}, [userInfo]);
 
 	const fetchFriendships = async () => {
 		setLoading(true);
 		try {
-			const response = await fetch(
-				'http://192.168.1.28:4000/api/friends/requests',
-				{
-					method: 'GET',
-					headers: {
-						authorization: `Bearer ${accessToken}`,
-					},
-				}
-			);
+			const response = await fetch(`${serverUrl}/api/friends/requests`, {
+				method: 'GET',
+				headers: {
+					authorization: `Bearer ${accessToken}`,
+				},
+			});
 
 			if (!response.ok) {
 				console.error('Failed to fetch friendship info');
@@ -43,8 +59,7 @@ export default function Friends({
 
 			const groupedRequests = {
 				accepted: [],
-				sentPending: [],
-				receivedPending: [],
+				pending: [],
 				receivedRejected: [],
 			};
 
@@ -58,11 +73,11 @@ export default function Friends({
 			});
 
 			data.friendRequests.sent.pending.forEach((request) => {
-				groupedRequests.sentPending.push(request); // Sent by the user
+				groupedRequests.pending.push(request); // Sent by the user
 			});
 
 			data.friendRequests.received.pending.forEach((request) => {
-				groupedRequests.receivedPending.push(request); // Received by the user
+				groupedRequests.pending.push(request); // Received by the user
 			});
 
 			data.friendRequests.received.rejected.forEach((request) => {
@@ -88,19 +103,16 @@ export default function Friends({
 		setSendingRequest(true);
 
 		try {
-			const response = await fetch(
-				'http://192.168.1.28:4000/api/friends/send',
-				{
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json',
-						authorization: `Bearer ${accessToken}`,
-					},
-					body: JSON.stringify({
-						targetUserName,
-					}),
-				}
-			);
+			const response = await fetch(`${serverUrl}/api/friends/send`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					authorization: `Bearer ${accessToken}`,
+				},
+				body: JSON.stringify({
+					targetUserName,
+				}),
+			});
 
 			if (!response.ok) {
 				const errorData = await response.json();
@@ -123,17 +135,14 @@ export default function Friends({
 	async function handleClick(title, request) {
 		setUpdating(true);
 		try {
-			const response = await fetch(
-				`http://192.168.1.28:4000/api/friends/${title}`,
-				{
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json',
-						authorization: `Bearer ${accessToken}`,
-					},
-					body: JSON.stringify({ senderId: request.senderId }),
-				}
-			);
+			const response = await fetch(`${serverUrl}/api/friends/${title}`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					authorization: `Bearer ${accessToken}`,
+				},
+				body: JSON.stringify({ senderId: request.senderId }),
+			});
 
 			if (!response.ok) {
 				throw new Error('Failed to accept the request');
@@ -271,19 +280,9 @@ export default function Friends({
 					</div>
 
 					<div className={styles.friendshipCategory}>
-						<h3>Sent Pending Friend Requests</h3>
+						<h3> Pending Friend Requests</h3>
 						<br />
-						{renderFriendRequests(friendRequests.sentPending)}
-					</div>
-
-					<div className={styles.friendshipCategory}>
-						<h3>Received Pending Friend Requests</h3>
-						<br />
-						{renderFriendRequests(
-							friendRequests.receivedPending,
-							acceptButton,
-							rejectButton
-						)}
+						{renderFriendRequests(friendRequests.pending)}
 					</div>
 
 					<div className={styles.friendshipCategory}>
