@@ -21,7 +21,7 @@ export default function Friends({ socket }) {
 	const [friendRequests, setFriendRequests] = useState({
 		accepted: [],
 		pending: [],
-		receivedRejected: [],
+		rejected: [],
 	});
 
 	const [targetUserName, setTargetUserName] = useState('');

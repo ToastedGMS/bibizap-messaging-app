@@ -1,18 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Message from './Message';
 import styles from '../stylesheets/Chat.module.css';
+import UserContext from '../context/UserContext';
+import ErrorContext from '../context/ErrorContext';
 
-export default function Chat({
-	userInfoState,
-	setErrorMessage,
-	socket,
-	socketID,
-}) {
-	const { userInfo } = userInfoState;
-	const navigate = useNavigate();
+export default function Chat({ socket }) {
+	const { userInfo } = useContext(UserContext);
+	const { setErrorMessage } = useContext(ErrorContext);
+
 	const [messages, setMessages] = useState([]);
 	const [messageText, setMessageText] = useState('');
+
+	const navigate = useNavigate();
 	const location = useLocation();
 	const roomName = location.state?.roomName;
 
@@ -24,10 +24,10 @@ export default function Chat({
 
 	// Effect for handling socket connections and user authentication
 	useEffect(() => {
-		if (userInfo === null) {
-			console.log('userInfo', userInfo);
+		if (userInfo === null || userInfo === undefined) {
 			setErrorMessage('Please login.');
 			navigate('/login');
+			return;
 		}
 
 		console.log('Connecting to socket...');
@@ -54,7 +54,7 @@ export default function Chat({
 			socket.off('message');
 			socket.off('disconnect');
 		};
-	}, [userInfo, navigate, setErrorMessage, socket]);
+	}, [userInfo, socket]);
 
 	// Effect for scrolling the send button into view when messages update
 	useEffect(() => {
