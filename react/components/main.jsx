@@ -7,7 +7,7 @@ import UserProfile from './user/UserProfile.jsx';
 import UpdateUser from './user/UpdateUser.jsx';
 import Friends from './friends/Friends.jsx';
 import ChatCollection from './ChatCollection.jsx';
-import Chat from './Chat.jsx';
+import Chat from './chat/Chat.jsx';
 import { io } from 'socket.io-client';
 import Signup from './auth/Signup.jsx';
 import Home from './Home.jsx';

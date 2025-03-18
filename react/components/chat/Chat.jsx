@@ -1,9 +1,9 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Message from './Message';
-import styles from '../stylesheets/Chat.module.css';
-import UserContext from '../context/UserContext';
-import ErrorContext from '../context/ErrorContext';
+import styles from '../../stylesheets/Chat.module.css';
+import UserContext from '../../context/UserContext';
+import ErrorContext from '../../context/ErrorContext';
 
 export default function Chat({ socket }) {
 	const { userInfo } = useContext(UserContext);

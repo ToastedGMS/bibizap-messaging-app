@@ -48,7 +48,7 @@ export default function Friends({ socket }) {
 			const groupedRequests = {
 				accepted: [],
 				pending: [],
-				receivedRejected: [],
+				rejected: [],
 			};
 
 			// Loop through all friend requests and categorize them
@@ -69,7 +69,7 @@ export default function Friends({ socket }) {
 			});
 
 			data.friendRequests.received.rejected.forEach((request) => {
-				groupedRequests.receivedRejected.push(request); // Received by the user
+				groupedRequests.rejected.push(request); // Received by the user
 			});
 
 			setFriendRequests(groupedRequests);
@@ -144,7 +144,7 @@ export default function Friends({ socket }) {
 					<div className={styles.friendshipCategory}>
 						<h3>Received Rejected Friend Requests</h3>
 						<br />
-						{renderFriendRequests(friendRequests.receivedRejected)}
+						{renderFriendRequests(friendRequests.rejected)}
 					</div>
 
 					<Search
