@@ -4,6 +4,7 @@ import styles from '../../stylesheets/Friends.module.css';
 import UserContext from '../../context/UserContext';
 import ErrorContext from '../../context/ErrorContext';
 import TokenContext from '../../context/TokenContext';
+import sendFriendRequest from './SendFriendRequest';
 const serverUrl = import.meta.env.VITE_SERVER_URL;
 
 export default function Friends({ socket }) {
@@ -11,20 +12,11 @@ export default function Friends({ socket }) {
 	const { setErrorMessage } = useContext(ErrorContext);
 	const { accessToken } = useContext(TokenContext);
 
-	useEffect(() => {
-		if (userInfo === null || userInfo === undefined) {
-			setErrorMessage('Please login.');
-			navigate('/login');
-			return;
-		}
-	}, [userInfo]);
-
 	const [loading, setLoading] = useState(false);
 	const [updating, setUpdating] = useState(false);
 	const [friendRequests, setFriendRequests] = useState({
 		accepted: [],
-		sentPending: [],
-		receivedPending: [],
+		pending: [],
 		receivedRejected: [],
 	});
 
@@ -94,42 +86,16 @@ export default function Friends({ socket }) {
 		}
 	};
 
-	const sendFriendRequest = async () => {
-		if (!targetUserName) {
-			setErrorMessage('Please provide a username');
-			return;
-		}
-
-		setSendingRequest(true);
-
-		try {
-			const response = await fetch(`${serverUrl}/api/friends/send`, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-					authorization: `Bearer ${accessToken}`,
-				},
-				body: JSON.stringify({
-					targetUserName,
-				}),
-			});
-
-			if (!response.ok) {
-				const errorData = await response.json();
-				setErrorMessage(errorData.error);
-				return;
-			}
-
-			const data = await response.json();
-			alert(data.message); // Show success message to the user
-			setTargetUserName(''); // Reset the input field
-			fetchFriendships(); // Refresh friend requests list
-		} catch (error) {
-			setErrorMessage('Error sending friend request');
-			console.error('Error sending friend request:', error);
-		} finally {
-			setSendingRequest(false);
-		}
+	const handleSendRequest = async () => {
+		await sendFriendRequest({
+			serverUrl,
+			accessToken,
+			targetUserName,
+			setErrorMessage,
+			setSendingRequest,
+			setTargetUserName,
+			fetchFriendships,
+		});
 	};
 
 	async function handleClick(title, request) {
@@ -199,8 +165,8 @@ export default function Friends({ socket }) {
 		return requests.map((request) => (
 			<div key={request.id} className={styles.friendRequest}>
 				<div>
-					{/* If the current user is the receiver of the request, show sender's details */}
 					{request.receiverId === userInfo.id ? (
+						// Se o usuário atual é o RECEIVER (quem recebeu o pedido):
 						<div>
 							<img
 								style={{
@@ -220,18 +186,32 @@ export default function Friends({ socket }) {
 							<div className="friend-request-info">
 								<p>@{request.sender.username}</p>
 							</div>
-							{opts.map((button, index) => (
+
+							{/* Renderiza o botão de aceitar só se o pedido estiver PENDENTE */}
+							{request.status === 'pending' && (
 								<button
 									className={styles.friendRequestBtn}
-									key={index}
-									onClick={() => button.onClick(request)}
+									onClick={() => acceptButton.onClick(request)}
 								>
-									{button.label}
+									{acceptButton.label}
 								</button>
-							))}
+							)}
+
+							{/* Renderiza os outros botões normalmente */}
+							{opts.map((button, index) =>
+								button !== acceptButton ? (
+									<button
+										key={index}
+										className={styles.friendRequestBtn}
+										onClick={() => button.onClick(request)}
+									>
+										{button.label}
+									</button>
+								) : null
+							)}
 						</div>
 					) : (
-						// If the current user is the sender, show receiver's details
+						// Se o usuário atual é o SENDER (quem enviou o pedido):
 						<div>
 							<img
 								style={{
@@ -251,11 +231,19 @@ export default function Friends({ socket }) {
 							<div className="friend-request-info">
 								<p>{request.receiver.username}</p>
 							</div>
-							{opts.map((button, index) => (
-								<button key={index} onClick={() => button.onClick(request)}>
-									{button.label}
-								</button>
-							))}
+
+							{/* Renderiza os botões exceto "Aceitar" */}
+							{opts
+								.filter((button) => button !== acceptButton)
+								.map((button, index) => (
+									<button
+										key={index}
+										className={styles.friendRequestBtn}
+										onClick={() => button.onClick(request)}
+									>
+										{button.label}
+									</button>
+								))}
 						</div>
 					)}
 				</div>
@@ -282,7 +270,7 @@ export default function Friends({ socket }) {
 					<div className={styles.friendshipCategory}>
 						<h3> Pending Friend Requests</h3>
 						<br />
-						{renderFriendRequests(friendRequests.pending)}
+						{renderFriendRequests(friendRequests.pending, acceptButton)}
 					</div>
 
 					<div className={styles.friendshipCategory}>
@@ -301,7 +289,7 @@ export default function Friends({ socket }) {
 						/>
 						<button
 							className={styles.friendBtn}
-							onClick={sendFriendRequest}
+							onClick={handleSendRequest}
 							disabled={sendingRequest}
 						>
 							{sendingRequest ? 'Sending...' : 'Send Request'}
