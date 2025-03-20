@@ -1,7 +1,7 @@
 const {
 	dbFetchUser,
 	dbUpdateUser,
-} = require('../../prisma/scripts/userScripts.cjs');
+} = require('../prisma/scripts/userScripts.cjs');
 
 async function fetchUser(id) {
 	if (!id) {

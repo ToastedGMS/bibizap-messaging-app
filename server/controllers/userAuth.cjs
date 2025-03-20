@@ -1,7 +1,7 @@
 const {
 	dbCreateUser,
 	dbCheckCredentials,
-} = require('../../prisma/scripts/userScripts.cjs');
+} = require('../prisma/scripts/userScripts.cjs');
 const jwt = require('jsonwebtoken');
 const jwtSecretKey = process.env.JWT_SECRET_KEY;
 const jwtExpiry = process.env.TOKEN_EXPIRY_TIME || '1h';

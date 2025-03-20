@@ -3,7 +3,7 @@ const {
 	dbAcceptRequest,
 	dbAllFriendRequests,
 	dbRejectRequest,
-} = require('../../prisma/scripts/friendScripts.cjs');
+} = require('../prisma/scripts/friendScripts.cjs');
 
 async function sendRequest(userId, targetUserName) {
 	if (!userId || !targetUserName) {
