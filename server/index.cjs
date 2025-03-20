@@ -1,4 +1,4 @@
-const prisma = require('../prisma/client.cjs');
+const prisma = require('./prisma/client.cjs');
 const express = require('express');
 const app = express();
 const cors = require('cors');
