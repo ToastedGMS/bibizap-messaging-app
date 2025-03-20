@@ -5,11 +5,13 @@
 	padding: 10px;
 	overflow-y: auto;
 	border: 1px solid #ddd;
+	height: 80vh;
 }
 
 .inputBox {
 	display: flex;
 	padding: 10px;
+	bottom: 10px;
 }
 
 .inputBox input {

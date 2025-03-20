@@ -58,8 +58,9 @@ export default function Chat({ socket }) {
 
 	// Effect for scrolling the send button into view when messages update
 	useEffect(() => {
-		const sendBtn = document.querySelector('.sendBtn');
-		sendBtn.scrollIntoView({ behavior: 'smooth' });
+		const positioner = document.querySelector('.positioner');
+		positioner.scrollIntoView({ behavior: 'smooth' });
+		console.log('scrolling');
 	}, [messages]);
 
 	return (
@@ -68,6 +69,7 @@ export default function Chat({ socket }) {
 				{messages.map((message, index) => (
 					<Message key={index} message={message} userInfo={userInfo} />
 				))}
+				<span className="positioner"></span>
 			</div>
 			<div className={styles.inputBox}>
 				<input
