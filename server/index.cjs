@@ -2,23 +2,23 @@ const prisma = require('./prisma/client.cjs');
 const express = require('express');
 const app = express();
 const cors = require('cors');
-const http = require('http').Server(app);
+const http = require('http');
 const { Server } = require('socket.io');
 require('dotenv').config({ path: '../.env' });
 
 const PORT = 4000;
 
-app.use(cors());
+const server = http.createServer(app);
 app.use(express.json());
 
-const io = new Server(http, {
-	cors: {
-		origin: 'authentic-emotion-production.up.railway.app/',
-		methods: '*',
-		credentials: true,
-	},
-});
+const corsOptions = {
+	origin: 'https://authentic-emotion-production.up.railway.app',
+	methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allow specific methods, including OPTIONS
+	allowedHeaders: ['Content-Type', 'Authorization'], // Allow 'Authorization' header
+	credentials: true,
+};
 
+app.use(cors(corsOptions));
 let activeRooms = {};
 
 const userAuthRouter = require('./routes/userAuth.cjs');
@@ -27,6 +27,15 @@ const friendshipRouter = require('./routes/friendRouter.cjs');
 app.use('/api/friends', friendshipRouter);
 const uploadRouter = require('./routes/uploadRoute.cjs');
 app.use('/api/upload', uploadRouter);
+
+const io = new Server(server, {
+	cors: {
+		origin: 'https://authentic-emotion-production.up.railway.app',
+		methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allow specific methods, including OPTIONS
+		allowedHeaders: ['Content-Type', 'Authorization'], // Allow 'Authorization' header
+		credentials: true,
+	},
+});
 
 io.on('connection', (socket) => {
 	console.log(`${socket.id} user just connected!`);
