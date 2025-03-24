@@ -47,17 +47,19 @@ export default function Login({ socket }) {
 			const response = await fetch(`${serverUrl}/api/users/login`, {
 				method: 'POST',
 				headers: {
-					'Content-Type': 'Application/JSON',
+					'Content-Type': 'application/json',
 				},
 				body: JSON.stringify(trimmedValues),
 			});
 
 			if (!response.ok) {
+				const errorText = await response.text();
+				console.error('Error response:', errorText); // Log the response for debugging
+
 				const errorData = await response.json();
 				setErrorMessage(errorData.error);
 				return;
 			}
-
 			const data = await response.json();
 			setAccessToken(data.info.token);
 			setUserInfo(await fetchUserInfo(data.info.user.id));

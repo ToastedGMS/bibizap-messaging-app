@@ -12,7 +12,10 @@ const server = http.createServer(app);
 app.use(express.json());
 
 const corsOptions = {
-	origin: 'https://bibizap-messaging-app-production.up.railway.app',
+	origin: [
+		'https://bibizap-messaging-app-production.up.railway.app',
+		'http://localhost:5173',
+	],
 	methods: '*',
 	allowedHeaders: ['Content-Type', 'Authorization'], // Allow 'Authorization' header
 	credentials: true,
@@ -30,7 +33,10 @@ app.use('/api/upload', uploadRouter);
 
 const io = new Server(server, {
 	cors: {
-		origin: 'https://bibizap-messaging-app-production.up.railway.app',
+		origin: [
+			'https://bibizap-messaging-app-production.up.railway.app',
+			'http://localhost:5173',
+		],
 		methods: '*',
 		allowedHeaders: ['Content-Type', 'Authorization'], // Allow 'Authorization' header
 		credentials: true,
