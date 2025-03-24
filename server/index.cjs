@@ -13,7 +13,7 @@ app.use(express.json());
 
 const io = new Server(http, {
 	cors: {
-		origin: 'https://authentic-emotion-production.up.railway.app/',
+		origin: 'authentic-emotion-production.up.railway.app/',
 		methods: '*',
 		credentials: true,
 	},
