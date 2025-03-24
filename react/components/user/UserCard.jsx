@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import styles from '../../stylesheets/UserProfile.module.css';
+import React from 'react';
 
 export default function UserCard({ userInfo }) {
 	const navigate = useNavigate();
