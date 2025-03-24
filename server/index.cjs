@@ -13,7 +13,7 @@ app.use(express.json());
 
 const corsOptions = {
 	origin: 'https://bibizap-messaging-app-production.up.railway.app',
-	methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allow specific methods, including OPTIONS
+	methods: '*',
 	allowedHeaders: ['Content-Type', 'Authorization'], // Allow 'Authorization' header
 	credentials: true,
 };
@@ -31,7 +31,7 @@ app.use('/api/upload', uploadRouter);
 const io = new Server(server, {
 	cors: {
 		origin: 'https://bibizap-messaging-app-production.up.railway.app',
-		methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allow specific methods, including OPTIONS
+		methods: '*',
 		allowedHeaders: ['Content-Type', 'Authorization'], // Allow 'Authorization' header
 		credentials: true,
 	},
