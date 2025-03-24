@@ -146,6 +146,6 @@ io.on('connection', (socket) => {
 	});
 });
 
-http.listen(PORT, '0.0.0.0', () => {
+app.listen(PORT, '0.0.0.0', () => {
 	console.log(`Server listening on http://192.168.1.28:${PORT}`);
 });
