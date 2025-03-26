@@ -53,9 +53,6 @@ export default function Login({ socket }) {
 			});
 
 			if (!response.ok) {
-				const errorText = await response.text();
-				console.error('Error response:', errorText); // Log the response for debugging
-
 				const errorData = await response.json();
 				setErrorMessage(errorData.error);
 				return;
