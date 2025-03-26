@@ -45,7 +45,7 @@ export default function Login({ socket }) {
 
 		try {
 			const response = await fetch(`${serverUrl}/api/users/login`, {
-				method: 'GET',
+				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
 				},
