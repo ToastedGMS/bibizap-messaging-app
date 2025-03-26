@@ -16,7 +16,7 @@ const corsOptions = {
 		'https://bibizap-messaging-app-production.up.railway.app',
 		'http://localhost:5173',
 	],
-	methods: '*',
+	methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
 	allowedHeaders: ['Content-Type', 'Authorization'], // Allow 'Authorization' header
 	credentials: true,
 };
@@ -37,7 +37,7 @@ const io = new Server(server, {
 			'https://bibizap-messaging-app-production.up.railway.app',
 			'http://localhost:5173',
 		],
-		methods: '*',
+		methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
 		allowedHeaders: ['Content-Type', 'Authorization'], // Allow 'Authorization' header
 		credentials: true,
 	},
