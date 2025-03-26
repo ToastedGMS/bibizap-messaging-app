@@ -1,6 +1,8 @@
+const serverUrl = import.meta.env.VITE_SERVER_URL;
+
 export const fetchUserInfo = async (id) => {
 	try {
-		const response = await fetch(`http://192.168.1.28:4000/api/users/${id}`);
+		const response = await fetch(`${serverUrl}/api/users/${id}`);
 
 		if (!response.ok) {
 			throw new Error('Failed to fetch user info');
