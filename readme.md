@@ -35,7 +35,7 @@ The app utilizes **React** for the frontend, **Node.js** with **Express** for th
 
 ## Live Demo
 
-You can check out the current progress and try the live demo here: [Live Demo](#) _(Replace # with your deployment URL)_
+You can check out the current progress and try the live demo here: [Live Demo](https://bibizap-messaging-app-production.up.railway.app/) _You can create two accounts on two different devices to test the chat functionality ;)_
 
 ## Prerequisites
 
